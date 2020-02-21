@@ -88,8 +88,8 @@ class XmlFileReader(val parser: XmlPullParser) {
         if (eventType == XmlPullParser.START_TAG && getCurrentXmlTag() == XmlTags.Address) {
             address = Address(
                 city = parser.getAttributeValue(null, "city") ?: "",
-                country = parser.getAttributeValue(null, "state") ?: "",
-                postCode = parser.getAttributeValue(null, "postcode") ?: "",
+                country = parser.getAttributeValue(null, "state") ?: parser.getAttributeValue(null, "country") ?: "",
+                postCode = parser.getAttributeValue(null, "postcode") ?: parser.getAttributeValue(null, "zipcode") ?: "",
                 street = parser.getAttributeValue(null, "street") ?: "",
                 telephone = parser.getAttributeValue(null, "telephone") ?: ""
             )
