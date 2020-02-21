@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.util.Xml
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import org.xmlpull.v1.XmlPullParser
-import java.nio.charset.Charset
+import eu.vmladenov.amymoney.storage.xml.XmlFileReader
 import java.util.zip.GZIPInputStream
 
 class MainActivity : AppCompatActivity() {
@@ -29,23 +28,12 @@ class MainActivity : AppCompatActivity() {
             val selectedfile = data.data ?: return
             contentResolver.openInputStream(selectedfile).use { inputStream ->
                 GZIPInputStream(inputStream).use { stream ->
-                    var parser = Xml.newPullParser()
+                    val parser = Xml.newPullParser()
                     parser.setInput(stream, "utf-8")
-
+                    XmlFileReader(parser).read()
 
                 }
             }
-        }
-
-    }
-
-    private fun readData(parser: XmlPullParser) {
-        var eventType = parser.eventType
-        while (eventType != XmlPullParser.END_DOCUMENT) {
-            when (eventType) {
-
-            }
-            eventType = parser.next()
         }
     }
 }
