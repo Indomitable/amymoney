@@ -1,11 +1,11 @@
 package eu.vmladenov.amymoney.dagger
 
 import dagger.Component
-import eu.vmladenov.amymoney.storage.xml.dagger.XmlReaderComponent
+import eu.vmladenov.amymoney.storage.xml.dagger.XmlHandlerComponent
 import javax.inject.Singleton
 
 @Singleton
 @Component
 interface AppComponent {
-    fun getXmlReaderComponentFactory(): XmlReaderComponent.Factory
+    fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
 }

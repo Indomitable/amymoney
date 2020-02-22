@@ -9,7 +9,13 @@ enum class XmlTags(val tagName: String) {
     FixVersion("FIXVERSION"),
     User("USER"),
     Address("ADDRESS"),
-    Payee("PAYEE");
+    Payee("PAYEE"),
+    Institutions("INSTITUTIONS"),
+    Institution("INSTITUTION"),
+    AccountIds("ACCOUNTIDS"),
+    AccountId("ACCOUNTID"),
+    KeyValuePairs("KEYVALUEPAIRS"),
+    Pair("PAIR");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)

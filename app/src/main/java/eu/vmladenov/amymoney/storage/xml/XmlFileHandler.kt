@@ -1,41 +1,41 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.*
-import eu.vmladenov.amymoney.Payee
+import eu.vmladenov.amymoney.models.FileInfo
+import eu.vmladenov.amymoney.models.Institutions
+import eu.vmladenov.amymoney.models.KMyMoneyState
+import eu.vmladenov.amymoney.models.User
 import org.xmlpull.v1.XmlPullParser
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
-class ParseException(val tagName: String, message: String) : Exception(message)
-
-interface IXmlFileReader {
-    fun read(): KMyMoneyFile
+interface IXmlFileHandler {
+    fun read(parser: XmlPullParser): KMyMoneyState
 }
 
-class XmlFileReader @Inject constructor (
-    parser: XmlPullParser,
-    private val fileInfoReader: IXmlFileInfoReader,
-    private val userReader: IXmlUserReader
-): XmlBaseReader(parser), IXmlFileReader {
+class XmlFileHandler @Inject constructor (
+    private val fileInfoHandler: IXmlFileInfoHandler,
+    private val userHandler: IXmlUserHandler,
+    private val institutionsHandler: IXmlInstitutionsHandler
+): XmlBaseHandler(), IXmlFileHandler {
 
-    override fun read(): KMyMoneyFile {
+    override fun read(parser: XmlPullParser): KMyMoneyState {
         var eventType = parser.eventType
         var fileInfo: FileInfo? = null
         var user: User? = null
+        var institutions: Institutions? = null
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             when (eventType) {
                 XmlPullParser.START_TAG -> {
-                    when (getCurrentXmlTag()) {
-                        XmlTags.FileInfo -> fileInfo = fileInfoReader.read()
-                        XmlTags.User -> user = userReader.read()
+                    when (XmlTags[parser.name]) {
+                        XmlTags.FileInfo -> fileInfo = fileInfoHandler.read(parser)
+                        XmlTags.User -> user = userHandler.read(parser)
+                        XmlTags.Institutions -> institutions = institutionsHandler.read(parser)
                     }
                 }
             }
             eventType = parser.next()
         }
-        return KMyMoneyFile(fileInfo!!, user!!)
+        return KMyMoneyState(fileInfo!!, user!!, institutions!!)
     }
 
 /*    private fun readPayee(): Payee {
