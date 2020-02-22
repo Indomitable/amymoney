@@ -23,4 +23,42 @@ enum class XmlTags(val tagName: String) {
     }
 }
 
+enum class XmlAddressAttributes {
+    Street,
+    City,
+    PostCode,
+    Country,
+    State,
+    Telephone,
+}
 
+enum class XmlPayeeAttributes {
+    ID,
+    Name,
+    Type,
+    Reference,
+    Notes,
+    MatchingEnabled,
+    UsingMatchKey,
+    MatchIgnoreCase,
+    MatchKey,
+    DefaultAccountID,
+    Email,
+    IBAN,
+    BIC,
+    OwnerVer1,
+    OwnerVer2,
+    BankCode,
+    AccountNumber,
+}
+
+enum class XmlInstitutionAttributes {
+    ID,
+    Name,
+    Manager,
+    SortCode,
+    Street,
+    City,
+    Zip,
+    Telephone,
+}

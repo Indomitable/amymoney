@@ -17,12 +17,19 @@ data class Address(
     val telephone: String = ""
 )
 
-data class Payee(
+data class User (
+    val name: String = "",
+    val email: String = "",
+    val address: Address = Address()
+)
+
+data class Payee (
     val id: String = "",
     val name: String = "",
     val email: String = "",
     val notes: String = "",
     val reference: String = "",
+    val defaultAccountId: String = "",
     val isMatchingEnabled: Boolean = true,
     val isUsingMatchKey: Boolean = true,
     val isMatchKeyIgnoreCase: Boolean = true,
@@ -34,5 +41,5 @@ data class Payee(
 
 data class KMyMoneyFile(
     val fileInfo: FileInfo,
-    val user: Payee
+    val user: User
 )

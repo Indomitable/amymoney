@@ -1,8 +1,7 @@
-package eu.vmladenov.amymoney
+package eu.vmladenov.amymoney.local_test
 
-import org.junit.Test
-
-import org.junit.Assert.*
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -11,7 +10,8 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    // @DisplayName("Addition")
+    fun `Should 2 + 2 equal to 4`() {
         assertEquals(4, 2 + 2)
     }
 }
