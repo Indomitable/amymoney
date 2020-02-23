@@ -28,9 +28,9 @@ enum class PayeeIdentifierType(val id: String) {
 }
 
 interface IPayeeIdentifier {
+    @XmlAttribute("type")
     val type: PayeeIdentifierType
 }
-
 
 data class IbanBicPayeeIdentifier(
     @XmlAttribute("iban") val iban: String,

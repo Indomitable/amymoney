@@ -16,31 +16,33 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(Xm
     override fun readChild(parser: XmlPullParser): Payee {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Payee.tagName)
 
-        val id: String = getAttributeValue(parser, Payee::id)
-        val name: String = getAttributeValue(parser, Payee::name)
-        val email: String = getAttributeValue(parser, Payee::email)
-        val notes: String = getAttributeValue(parser, Payee::notes)
-        val reference: String = getAttributeValue(parser, Payee::reference)
-        val defaultAccountId: String = getAttributeValue(parser, Payee::defaultAccountId)
-        val isMatchingEnabled: Boolean = getAttributeValue(parser, Payee::isMatchingEnabled) == "1"
-        val isUsingMatchKey: Boolean = getAttributeValue(parser, Payee::isUsingMatchKey) == "1"
-        val isMatchKeyIgnoreCase: Boolean = getAttributeValue(parser, Payee::isMatchKeyIgnoreCase) == "1"
-        val matchKey: String = getAttributeValue(parser, Payee::matchKey)
-
-        var address: Address? = null
         val identifiers: MutableList<IPayeeIdentifier> = mutableListOf()
+        val payee = Payee (
+            id = getAttributeValue(parser, Payee::id),
+            name = getAttributeValue(parser, Payee::name),
+            email = getAttributeValue(parser, Payee::email),
+            notes = getAttributeValue(parser, Payee::notes),
+            reference = getAttributeValue(parser, Payee::reference),
+            defaultAccountId = getAttributeValue(parser, Payee::defaultAccountId),
+            isMatchingEnabled = getAttributeValue(parser, Payee::isMatchingEnabled) == "1",
+            isUsingMatchKey = getAttributeValue(parser, Payee::isUsingMatchKey) == "1",
+            isMatchKeyIgnoreCase = getAttributeValue(parser, Payee::isMatchKeyIgnoreCase) == "1",
+            matchKey = getAttributeValue(parser, Payee::matchKey),
+            address = Address(),
+            identifiers = identifiers
+        )
 
         parseChildren(parser, XmlTags.Payee) { tagName, xmlParser ->
             when (tagName) {
-                XmlTags.Address -> address = Address(
-                    city = getAttributeValue(xmlParser, "city"),
-                    country = getAttributeValue(xmlParser, "state"),
-                    postCode = getAttributeValue(xmlParser, "postcode"),
-                    street = getAttributeValue(xmlParser, "street"),
-                    telephone = getAttributeValue(xmlParser, "telephone")
-                )
+                XmlTags.Address -> {
+                    payee.address.city = getAttributeValue(xmlParser, "city")
+                    payee.address.country = getAttributeValue(xmlParser, "state")
+                    payee.address.postCode = getAttributeValue(xmlParser, "postcode")
+                    payee.address.street = getAttributeValue(xmlParser, "street")
+                    payee.address.telephone = getAttributeValue(xmlParser, "telephone")
+                }
                 XmlTags.PayeeIdentifier -> {
-                    when (getAttributeValue(xmlParser,"type")) {
+                    when (getAttributeValue(xmlParser, IPayeeIdentifier::type)) {
                         PayeeIdentifierType.IbanBic.id -> identifiers.add(
                             IbanBicPayeeIdentifier(
                                 iban = getAttributeValue(xmlParser, IbanBicPayeeIdentifier::iban),
@@ -61,10 +63,6 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(Xm
                 else -> throw XmlParseException(tagName, "Unknown tagName: ${tagName.tagName} in Payee Tag. Line: ${xmlParser.lineNumber}")
             }
         }
-
-        if (address == null) {
-            throw XmlParseException(XmlTags.Address, "No address found for Payee. Line: ${parser.lineNumber}")
-        }
-        return Payee(id, name, email, notes, reference, defaultAccountId, isMatchingEnabled, isUsingMatchKey, isMatchKeyIgnoreCase, matchKey, address!!, identifiers)
+        return payee
     }
 }

@@ -27,7 +27,7 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
        </ACCOUNTIDS>
        <KEYVALUEPAIRS>
         <PAIR value="BICNUM123" key="bic"/>
-        <PAIR value="erste-bank" key="url"/>
+        <PAIR value="bank-url" key="url"/>
        </KEYVALUEPAIRS>
       </INSTITUTION>
   </INSTITUTIONS>
@@ -46,11 +46,13 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
         assertEquals("Wien", institution.address.city)
         assertEquals("+431111", institution.address.telephone)
 
+        assertEquals(2, institution.accountIds.size)
+        assertEquals("A000135", institution.accountIds[0])
+        assertEquals("A000136", institution.accountIds[1])
+
         assertEquals(2, institution.extra.size)
-        assertEquals("bic", institution.extra[0].first)
-        assertEquals("BICNUM123", institution.extra[0].second)
-        assertEquals("url", institution.extra[1].first)
-        assertEquals("erste-bank", institution.extra[1].second)
+        assertEquals("BICNUM123", institution.extra["bic"])
+        assertEquals("bank-url", institution.extra["url"])
     }
 
     @Test

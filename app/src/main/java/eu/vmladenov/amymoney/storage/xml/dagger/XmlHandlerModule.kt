@@ -29,4 +29,7 @@ abstract class XmlHandlerModule {
 
     @Binds
     abstract fun bindAccountsHandler(accountHandler: XmlAccountHandler): IXmlAccountHandler
+
+    @Binds
+    abstract fun bindTransactionsHandler(transactionsHandler: XmlTransactionsHandler): IXmlTransactionsHandler
 }

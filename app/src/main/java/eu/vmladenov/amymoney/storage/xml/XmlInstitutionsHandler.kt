@@ -18,44 +18,33 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
     override fun readChild(parser: XmlPullParser): Institution {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Institution.tagName)
 
-        val id = getAttributeValue(parser, Institution::id)
-        val sortCode = getAttributeValue(parser, Institution::sortCode)
-        val name = getAttributeValue(parser, Institution::name)
-        val manager = getAttributeValue(parser, Institution::manager)
-
-        var address: Address? = null
         val accountIds = mutableListOf<String>()
-        val extraData = mutableListOf<Pair<String, String>>()
+        val extraData = mutableMapOf<String, String>()
+        val institution = Institution(
+            id = getAttributeValue(parser, Institution::id),
+            sortCode = getAttributeValue(parser, Institution::sortCode),
+            name = getAttributeValue(parser, Institution::name),
+            manager = getAttributeValue(parser, Institution::manager),
+            accountIds = accountIds,
+            extra = extraData,
+            address = Address()
+        )
         parseChildren(parser, XmlTags.Institution) { tagName, xmlParser ->
             when (tagName) {
-                XmlTags.Address ->
-                    address = Address(
-                        city = getAttributeValue(xmlParser, "city"),
-                        country = getAttributeValue(xmlParser, "county"),
-                        postCode = getAttributeValue(xmlParser, "zip"),
-                        street = getAttributeValue(xmlParser, "street"),
-                        telephone = getAttributeValue(xmlParser, "telephone")
-                    )
+                XmlTags.Address -> {
+                    institution.address.city = getAttributeValue(xmlParser, "city")
+                    institution.address.country = getAttributeValue(xmlParser, "county")
+                    institution.address.postCode = getAttributeValue(xmlParser, "zip")
+                    institution.address.street = getAttributeValue(xmlParser, "street")
+                    institution.address.telephone = getAttributeValue(xmlParser, "telephone")
+                }
                 XmlTags.AccountIds ->
-                    parseChildren(xmlParser, tagName) { accountId, xmlParser1 ->
-                        if (accountId == XmlTags.AccountId) {
-                            accountIds.add(getAttributeValue(xmlParser1, "id"))
-                        }
-                    }
+                    accountIds.addAll(readIdList(xmlParser, XmlTags.AccountIds, XmlTags.AccountId))
                 XmlTags.KeyValuePairs ->
-                    parseChildren(xmlParser, tagName) { pair, xmlParser2 ->
-                        if (pair == XmlTags.Pair) {
-                            extraData.add(
-                                getAttributeValue(xmlParser2, "key") to getAttributeValue(xmlParser2, "value")
-                            )
-                        }
-                    }
+                    extraData.putAll(readKeyValuePairs(xmlParser))
                 else -> throw XmlParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
-        if (address == null) {
-            address = Address()
-        }
-        return Institution(id, name, sortCode, manager, address!!, accountIds, extraData)
+        return institution
     }
 }

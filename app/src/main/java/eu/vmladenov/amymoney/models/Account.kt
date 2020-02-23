@@ -57,7 +57,7 @@ data class Account(
     // @XmlAttribute("iban") val iban: String,
     // @XmlAttribute("bic") val bic: String
     val subAccounts: List<String>,
-    val extra: List<Pair<String, String>>
+    val extra: Map<String, String>
 )
 
 @XmlTag(XmlTags.Accounts)

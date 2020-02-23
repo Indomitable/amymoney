@@ -111,19 +111,6 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
     }
 
     @Test(expected = XmlParseException::class)
-    fun shouldThrowWhenNoAddress() {
-        val parser = createParser(
-            """
- <PAYEES>                
-  <PAYEE matchignorecase="1" matchingenabled="1" matchkey="Company 1&#xa;Company0" name="Company" usingmatchkey="1" id="P000004" reference="Reference" defaultaccountid="A000008" notes="Some hotes&#xa;More notes" email="company@server.com">
-  </PAYEE>
- </PAYEES>
-            """
-        )
-        service.read(parser)
-    }
-
-    @Test(expected = XmlParseException::class)
     fun shouldThrowWhenContainsUnknownTag() {
         val parser = createParser(
             """

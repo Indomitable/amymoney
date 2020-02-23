@@ -10,7 +10,7 @@ data class Institution(
     @XmlAttribute("manager") val manager: String = "",
     val address: Address = Address(),
     val accountIds: List<String>,
-    val extra: List<Pair<String, String>>
+    val extra: Map<String, String>
 )
 
 @XmlTag(XmlTags.Institutions)

@@ -53,11 +53,11 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
 
 
         Assert.assertEquals(5, account.extra.size)
-        Assert.assertEquals(Pair("PreferredAccount", "Yes"), account.extra[0])
-        Assert.assertEquals(Pair("iban", "AT34234234234234"), account.extra[1])
-        Assert.assertEquals(Pair("lastNumberUsed", "1"), account.extra[2])
-        Assert.assertEquals(Pair("maxCreditEarly", "-10000/1"), account.extra[3])
-        Assert.assertEquals(Pair("minBalanceEarly", "100/1"), account.extra[4])
+        Assert.assertEquals("Yes", account.extra["PreferredAccount"])
+        Assert.assertEquals("AT34234234234234", account.extra["iban"])
+        Assert.assertEquals("1", account.extra["lastNumberUsed"])
+        Assert.assertEquals("-10000/1", account.extra["maxCreditEarly"])
+        Assert.assertEquals("100/1", account.extra["minBalanceEarly"])
     }
 
     @Test

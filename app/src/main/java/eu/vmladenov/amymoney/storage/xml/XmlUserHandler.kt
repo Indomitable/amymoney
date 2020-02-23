@@ -12,19 +12,18 @@ interface IXmlUserHandler {
 class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
     override fun read(parser: XmlPullParser): User {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.User.tagName)
-        val name: String = getAttributeValue(parser, User::name)
-        val email: String = getAttributeValue(parser, User::email)
-
-        val address = readChild(parser, XmlTags.User, XmlTags.Address) {
-            Address(
-                city = getAttributeValue(it, "city"),
-                country = getAttributeValue(it, "county"),
-                postCode = getAttributeValue(it, "zipcode"),
-                street = getAttributeValue(it, "street"),
-                telephone = getAttributeValue(it, "telephone")
-            )
+        val user = User(
+            name = getAttributeValue(parser, User::name),
+            email = getAttributeValue(parser, User::email),
+            address = Address()
+        )
+        readChild(parser, XmlTags.User, XmlTags.Address) {
+            user.address.city = getAttributeValue(it, "city")
+            user.address.country = getAttributeValue(it, "county")
+            user.address.postCode = getAttributeValue(it, "zipcode")
+            user.address.street = getAttributeValue(it, "street")
+            user.address.telephone = getAttributeValue(it, "telephone")
         }
-
-        return User(name, email, address)
+        return user
     }
 }

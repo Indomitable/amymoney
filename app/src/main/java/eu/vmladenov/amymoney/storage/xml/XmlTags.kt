@@ -25,7 +25,11 @@ enum class XmlTags(val tagName: String) {
     Account("ACCOUNT"),
     Accounts("ACCOUNTS"),
     SubAccount("SUBACCOUNT"),
-    SubAccounts("SUBACCOUNTS");
+    SubAccounts("SUBACCOUNTS"),
+    Transactions("TRANSACTIONS"),
+    Transaction("TRANSACTION"),
+    Splits("SPLITS"),
+    Split("SPLIT");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)

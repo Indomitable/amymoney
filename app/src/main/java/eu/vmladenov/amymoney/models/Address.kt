@@ -1,9 +1,9 @@
 package eu.vmladenov.amymoney.models
 
 data class Address(
-    val city: String = "",
-    val country: String = "",  // MyMoneyPayee::state
-    val postCode: String = "", // In User stored as zipcode
-    val street: String = "",   // MyMoneyPayee::address
-    val telephone: String = ""
+    var city: String = "",
+    var country: String = "",  // MyMoneyPayee::state
+    var postCode: String = "", // In User stored as zipcode
+    var street: String = "",   // MyMoneyPayee::address
+    var telephone: String = ""
 )

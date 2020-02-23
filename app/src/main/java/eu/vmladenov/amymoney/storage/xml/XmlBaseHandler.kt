@@ -58,6 +58,31 @@ abstract class XmlBaseHandler {
         } while (!(eventType == XmlPullParser.END_TAG && tagName == parentTag))
     }
 
+    protected fun readIdList(parser: XmlPullParser, parentTag: XmlTags, childTag: XmlTags): List<String> {
+        parser.require(XmlPullParser.START_TAG, null, parentTag.tagName)
+        val result = mutableListOf<String>()
+        parseChildren(parser, parentTag) { tagName, xmlParser ->
+            if (tagName == childTag) {
+                val id = getAttributeValue(xmlParser, "id")
+                result.add(id)
+            }
+        }
+        return result
+    }
+
+    protected fun readKeyValuePairs(parser: XmlPullParser): Map<String, String> {
+        parser.require(XmlPullParser.START_TAG, null, XmlTags.KeyValuePairs.tagName)
+        val result = mutableMapOf<String, String>()
+        parseChildren(parser, XmlTags.KeyValuePairs) { pair, xmlParser ->
+            if (pair == XmlTags.Pair) {
+                val key = getAttributeValue(xmlParser, "key")
+                val value = getAttributeValue(xmlParser, "value")
+                result[key] = value
+            }
+        }
+        return result
+    }
+
     protected fun getXmlTag(type: KClass<*>): XmlTags {
         val tagAnnotation = type.annotations.find { a -> a is XmlTag } as? XmlTag
         if (tagAnnotation != null) {
