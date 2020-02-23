@@ -74,7 +74,7 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
     }
 
     @Test
-    fun shouldBeAbleToReadWhenAccountIds() {
+    fun shouldBeAbleToReadWhenNOAccountIds() {
         val parser = createParser(
             """
     <INSTITUTIONS count="2">
@@ -120,5 +120,16 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
         assertEquals("1030", institution.address.postCode)
         assertEquals("Linz", institution.address.city)
         assertEquals("+43222", institution.address.telephone)
+    }
+
+    @Test
+    fun shouldBeAbleToReadEmptyInstitutions(){
+        val parser = createParser(
+            """
+    <INSTITUTIONS count="0"/>
+            """
+        )
+        val institutions = service.read(parser)
+        assertEquals(0, institutions.size)
     }
 }
