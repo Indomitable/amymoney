@@ -1,13 +1,18 @@
 package eu.vmladenov.amymoney.models
 
-data class Institutions(val institutions: List<Institution>): ArrayList<Institution>(institutions)
+import eu.vmladenov.amymoney.storage.xml.XmlTags
 
+@XmlTag(XmlTags.Institution)
 data class Institution(
-    val id: String = "",
-    val name: String = "",
-    val sortCode: String = "",
-    val manager: String = "",
+    @XmlAttribute("id") val id: String = "",
+    @XmlAttribute("name") val name: String = "",
+    @XmlAttribute("sortcode") val sortCode: String = "",
+    @XmlAttribute("manager") val manager: String = "",
     val address: Address = Address(),
     val accountIds: List<String>,
     val extra: List<Pair<String, String>>
 )
+
+@XmlTag(XmlTags.Institutions)
+@XmlCollection(Institution::class)
+data class Institutions(val institutions: List<Institution>): ArrayList<Institution>(institutions)

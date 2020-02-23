@@ -1,7 +1,8 @@
 package eu.vmladenov.amymoney.models
 
-data class Payees(val payees: List<Payee>) : ArrayList<Payee>(payees.toList())
+import eu.vmladenov.amymoney.storage.xml.XmlTags
 
+@XmlTag(XmlTags.Payee)
 data class Payee(
     @XmlAttribute("id") val id: String = "",
     @XmlAttribute("name") val name: String = "",
@@ -16,6 +17,10 @@ data class Payee(
     val address: Address = Address(),
     val identifiers: List<IPayeeIdentifier> = emptyList()
 )
+
+@XmlTag(XmlTags.Payees)
+@XmlCollection(Payee::class)
+data class Payees(val payees: List<Payee>) : ArrayList<Payee>(payees)
 
 enum class PayeeIdentifierType(val id: String) {
     IbanBic("org.kmymoney.payeeIdentifier.ibanbic"),

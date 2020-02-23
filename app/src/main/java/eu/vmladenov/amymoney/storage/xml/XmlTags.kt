@@ -19,16 +19,19 @@ enum class XmlTags(val tagName: String) {
     Pair("PAIR"),
     PayeeIdentifier("payeeIdentifier"),
     CostCenters("COSTCENTERS"),
-    CostCenter("COSTCENTER");
+    CostCenter("COSTCENTER"),
+    Tags("TAGS"),
+    Tag("TAG"),
+    Account("ACCOUNT"),
+    Accounts("ACCOUNTS"),
+    SubAccount("SUBACCOUNT"),
+    SubAccounts("SUBACCOUNTS");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)
 
         operator fun get(tagName: String?): XmlTags {
-            if (!map.containsKey(tagName)) {
-                return Unknown
-            }
-            return map[tagName]!!
+            return if (tagName === null) Unknown else map.getOrElse(tagName) { Unknown }
         }
     }
 }

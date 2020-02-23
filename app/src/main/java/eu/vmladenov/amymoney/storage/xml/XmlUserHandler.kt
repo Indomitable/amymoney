@@ -12,8 +12,8 @@ interface IXmlUserHandler {
 class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
     override fun read(parser: XmlPullParser): User {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.User.tagName)
-        val name: String = getAttributeValue(parser, "name")
-        val email: String = getAttributeValue(parser, "email")
+        val name: String = getAttributeValue(parser, User::name)
+        val email: String = getAttributeValue(parser, User::email)
 
         val address = readChild(parser, XmlTags.User, XmlTags.Address) {
             Address(

@@ -1,10 +1,13 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.models.XmlAttribute
+import eu.vmladenov.amymoney.models.XmlTag
 import org.xmlpull.v1.XmlPullParser
 import java.lang.Exception
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
 abstract class XmlBaseHandler {
@@ -22,6 +25,15 @@ abstract class XmlBaseHandler {
         throw Exception("Property has no XmlAttribute annotation. Use name: String overload.")
     }
 
+    protected fun <TClass> getDateAttributeValue(parser: XmlPullParser, name: KProperty1<TClass, Date?>): Date? {
+        val attribute = name.annotations.find { a -> a is XmlAttribute } as? XmlAttribute
+        if (attribute != null) {
+            val value = getAttributeValue(parser, attribute.value)
+            return try { dateFormat.parse(value) } catch (e: ParseException) { null }
+        }
+        throw Exception("Property has no XmlAttribute annotation. Use name: String overload.")
+    }
+
     protected fun <T> readChild(parser: XmlPullParser, parentTag: XmlTags, childTag: XmlTags, handler: (parser: XmlPullParser) -> T): T {
         var child: T? = null
         parseChildren(parser, parentTag) {tagName, xmlParser ->
@@ -31,7 +43,7 @@ abstract class XmlBaseHandler {
             }
         }
         if (child == null) {
-            throw ParseException(parentTag, "Child ${childTag.tagName} not found in ${parentTag.tagName}. Line: ${parser.lineNumber}")
+            throw XmlParseException(parentTag, "Child ${childTag.tagName} not found in ${parentTag.tagName}. Line: ${parser.lineNumber}")
         }
         return child!!
     }
@@ -44,5 +56,13 @@ abstract class XmlBaseHandler {
                 handler(tagName, parser)
             }
         } while (!(eventType == XmlPullParser.END_TAG && tagName == parentTag))
+    }
+
+    protected fun getXmlTag(type: KClass<*>): XmlTags {
+        val tagAnnotation = type.annotations.find { a -> a is XmlTag } as? XmlTag
+        if (tagAnnotation != null) {
+            return tagAnnotation.value
+        }
+        throw Exception("Class ${type.simpleName} has no XmlTag annotation")
     }
 }

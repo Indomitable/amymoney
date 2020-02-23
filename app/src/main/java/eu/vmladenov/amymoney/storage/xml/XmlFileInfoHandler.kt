@@ -29,7 +29,7 @@ class XmlFileInfoHandler @Inject constructor() : XmlBaseHandler(), IXmlFileInfoH
                 XmlTags.FixVersion ->
                     fixVersion = Integer.parseInt(getAttributeValue(xmlParser, "id"))
                 else ->
-                    throw ParseException(tagName, "Unknown tag ${tagName.tagName} in File Info tag. Line: ${xmlParser.lineNumber}")
+                    throw XmlParseException(tagName, "Unknown tag ${tagName.tagName} in File Info tag. Line: ${xmlParser.lineNumber}")
             }
         }
         return FileInfo(creationDate!!, lastModifyDate!!, version!!, fixVersion!!)

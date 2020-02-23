@@ -2,7 +2,7 @@ package eu.vmladenov.amymoney.android_test.storage.xml
 
 import eu.vmladenov.amymoney.models.IbanBicPayeeIdentifier
 import eu.vmladenov.amymoney.models.NationalAccountPayeeIdentifier
-import eu.vmladenov.amymoney.storage.xml.ParseException
+import eu.vmladenov.amymoney.storage.xml.XmlParseException
 import eu.vmladenov.amymoney.storage.xml.XmlPayeesHandler
 import org.junit.Assert
 import org.junit.Before
@@ -110,7 +110,7 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
         Assert.assertEquals(0, payees.size)
     }
 
-    @Test(expected = ParseException::class)
+    @Test(expected = XmlParseException::class)
     fun shouldThrowWhenNoAddress() {
         val parser = createParser(
             """
@@ -123,7 +123,7 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
         service.read(parser)
     }
 
-    @Test(expected = ParseException::class)
+    @Test(expected = XmlParseException::class)
     fun shouldThrowWhenContainsUnknownTag() {
         val parser = createParser(
             """

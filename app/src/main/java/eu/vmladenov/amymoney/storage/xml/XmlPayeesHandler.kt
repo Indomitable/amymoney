@@ -58,12 +58,12 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(Xm
                         )
                     }
                 }
-                else -> throw ParseException(tagName, "Unknown tagName: ${tagName.tagName} in Payee Tag. Line: ${xmlParser.lineNumber}")
+                else -> throw XmlParseException(tagName, "Unknown tagName: ${tagName.tagName} in Payee Tag. Line: ${xmlParser.lineNumber}")
             }
         }
 
         if (address == null) {
-            throw ParseException(XmlTags.Address, "No address found for Payee. Line: ${parser.lineNumber}")
+            throw XmlParseException(XmlTags.Address, "No address found for Payee. Line: ${parser.lineNumber}")
         }
         return Payee(id, name, email, notes, reference, defaultAccountId, isMatchingEnabled, isUsingMatchKey, isMatchKeyIgnoreCase, matchKey, address!!, identifiers)
     }

@@ -18,10 +18,10 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
     override fun readChild(parser: XmlPullParser): Institution {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Institution.tagName)
 
-        val id = getAttributeValue(parser, "id")
-        val sortCode = getAttributeValue(parser, "sortcode")
-        val name = getAttributeValue(parser, "name")
-        val manager = getAttributeValue(parser, "manager")
+        val id = getAttributeValue(parser, Institution::id)
+        val sortCode = getAttributeValue(parser, Institution::sortCode)
+        val name = getAttributeValue(parser, Institution::name)
+        val manager = getAttributeValue(parser, Institution::manager)
 
         var address: Address? = null
         val accountIds = mutableListOf<String>()
@@ -50,7 +50,7 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
                             )
                         }
                     }
-                else -> throw ParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
+                else -> throw XmlParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
         if (address == null) {

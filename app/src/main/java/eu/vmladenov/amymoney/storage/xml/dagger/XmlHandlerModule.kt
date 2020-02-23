@@ -23,4 +23,10 @@ abstract class XmlHandlerModule {
 
     @Binds
     abstract fun bindCostCentersHandler(costCentersHandler: XmlCostCentersHandler): IXmlCostCentersHandler
+
+    @Binds
+    abstract fun bindTagsHandler(tagsHandler: XmlTagsHandler): IXmlTagsHandler
+
+    @Binds
+    abstract fun bindAccountsHandler(accountHandler: XmlAccountHandler): IXmlAccountHandler
 }

@@ -37,10 +37,10 @@ class XmlFileHandler @Inject constructor (
         }
 
         if (fileInfo == null) {
-            throw ParseException(XmlTags.FileInfo, "No File info tag is found")
+            throw XmlParseException(XmlTags.FileInfo, "No File info tag is found")
         }
         if (user == null) {
-            throw ParseException(XmlTags.User, "No User tag is found")
+            throw XmlParseException(XmlTags.User, "No User tag is found")
         }
         if (institutions == null) {
             institutions = Institutions(emptyList())
