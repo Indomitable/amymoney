@@ -17,7 +17,9 @@ enum class XmlTags(val tagName: String) {
     AccountId("ACCOUNTID"),
     KeyValuePairs("KEYVALUEPAIRS"),
     Pair("PAIR"),
-    PayeeIdentifier("payeeIdentifier");
+    PayeeIdentifier("payeeIdentifier"),
+    CostCenters("COSTCENTERS"),
+    CostCenter("COSTCENTER");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)

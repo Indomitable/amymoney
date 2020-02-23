@@ -1,18 +1,18 @@
 package eu.vmladenov.amymoney.models
 
-data class Payees(val payees: List<Payee>): ArrayList<Payee>(payees)
+data class Payees(val payees: List<Payee>) : ArrayList<Payee>(payees.toList())
 
-data class Payee (
-    val id: String = "",
-    val name: String = "",
-    val email: String = "",
-    val notes: String = "",
-    val reference: String = "",
-    val defaultAccountId: String = "",
-    val isMatchingEnabled: Boolean = true,
-    val isUsingMatchKey: Boolean = true,
-    val isMatchKeyIgnoreCase: Boolean = true,
-    val matchKey: String = "",
+data class Payee(
+    @XmlAttribute("id") val id: String = "",
+    @XmlAttribute("name") val name: String = "",
+    @XmlAttribute("email") val email: String = "",
+    @XmlAttribute("notes") val notes: String = "",
+    @XmlAttribute("reference") val reference: String = "",
+    @XmlAttribute("defaultaccountid") val defaultAccountId: String = "",
+    @XmlAttribute("matchingenabled") val isMatchingEnabled: Boolean = true,
+    @XmlAttribute("usingmatchkey") val isUsingMatchKey: Boolean = true,
+    @XmlAttribute("matchignorecase") val isMatchKeyIgnoreCase: Boolean = true,
+    @XmlAttribute("matchkey") val matchKey: String = "",
     val address: Address = Address(),
     val identifiers: List<IPayeeIdentifier> = emptyList()
 )
@@ -27,10 +27,19 @@ interface IPayeeIdentifier {
 }
 
 
-data class IbanBicPayeeIdentifier(val iban: String, val bic: String, val ownerName: String): IPayeeIdentifier {
+data class IbanBicPayeeIdentifier(
+    @XmlAttribute("iban") val iban: String,
+    @XmlAttribute("bic") val bic: String,
+    @XmlAttribute("ownerName") val ownerName: String
+) : IPayeeIdentifier {
     override val type: PayeeIdentifierType = PayeeIdentifierType.IbanBic
 }
 
-data class NationalAccountPayeeIdentifier(val bankCode: String, val accountNumber: String, val ownerName: String, val country: String): IPayeeIdentifier {
+data class NationalAccountPayeeIdentifier(
+    @XmlAttribute("bankcode") val bankCode: String,
+    @XmlAttribute("accountnumber") val accountNumber: String,
+    @XmlAttribute("ownername") val ownerName: String,
+    @XmlAttribute("country") val country: String
+) : IPayeeIdentifier {
     override val type: PayeeIdentifierType = PayeeIdentifierType.NationalAccount
 }

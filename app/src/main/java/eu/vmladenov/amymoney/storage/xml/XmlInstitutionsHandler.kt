@@ -10,21 +10,12 @@ interface IXmlInstitutionsHandler {
     fun read(parser: XmlPullParser): Institutions
 }
 
-class XmlInstitutionsHandler @Inject constructor() : XmlBaseHandler(), IXmlInstitutionsHandler {
+class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<Institution>(XmlTags.Institutions, XmlTags.Institution), IXmlInstitutionsHandler {
     override fun read(parser: XmlPullParser): Institutions {
-        parser.require(XmlPullParser.START_TAG, null, XmlTags.Institutions.tagName)
-        val institutions = mutableListOf<Institution>()
-
-        parseChildren(parser, XmlTags.Institutions) { tagName, xmlParser ->
-            if (tagName == XmlTags.Institution) {
-                institutions.add(readInstitution(xmlParser))
-            }
-        }
-
-        return Institutions(institutions)
+        return Institutions(readChildren(parser))
     }
 
-    private fun readInstitution(parser: XmlPullParser): Institution {
+    override fun readChild(parser: XmlPullParser): Institution {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Institution.tagName)
 
         val id = getAttributeValue(parser, "id")
@@ -33,8 +24,8 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseHandler(), IXmlInsti
         val manager = getAttributeValue(parser, "manager")
 
         var address: Address? = null
-        var accountIds = mutableListOf<String>()
-        var extraData = mutableListOf<Pair<String, String>>()
+        val accountIds = mutableListOf<String>()
+        val extraData = mutableListOf<Pair<String, String>>()
         parseChildren(parser, XmlTags.Institution) { tagName, xmlParser ->
             when (tagName) {
                 XmlTags.Address ->
@@ -59,6 +50,7 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseHandler(), IXmlInsti
                             )
                         }
                     }
+                else -> throw ParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
         if (address == null) {

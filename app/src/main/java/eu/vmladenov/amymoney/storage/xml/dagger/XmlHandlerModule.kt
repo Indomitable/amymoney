@@ -20,4 +20,7 @@ abstract class XmlHandlerModule {
 
     @Binds
     abstract fun bindPayeesHandler(payeesHandler: XmlPayeesHandler): IXmlPayeesHandler
+
+    @Binds
+    abstract fun bindCostCentersHandler(costCentersHandler: XmlCostCentersHandler): IXmlCostCentersHandler
 }

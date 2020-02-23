@@ -8,33 +8,24 @@ interface IXmlPayeesHandler {
     fun read(parser: XmlPullParser): Payees
 }
 
-class XmlPayeesHandler @Inject constructor(): XmlBaseHandler(), IXmlPayeesHandler {
+class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(XmlTags.Payees, XmlTags.Payee), IXmlPayeesHandler {
     override fun read(parser: XmlPullParser): Payees {
-        parser.require(XmlPullParser.START_TAG, null, XmlTags.Payees.tagName)
-        val payees = mutableListOf<Payee>()
-
-        parseChildren(parser, XmlTags.Payees) { tagName, xmlParser ->
-            if (tagName == XmlTags.Payee) {
-                payees.add(readPayee(xmlParser))
-            }
-        }
-
-        return Payees(payees)
+        return Payees(readChildren(parser))
     }
 
-    private fun readPayee(parser: XmlPullParser): Payee {
+    override fun readChild(parser: XmlPullParser): Payee {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Payee.tagName)
 
-        val id: String = getAttributeValue(parser, "id")
-        val name: String = getAttributeValue(parser, "name")
-        val email: String = getAttributeValue(parser, "email")
-        val notes: String = getAttributeValue(parser, "notes")
-        val reference: String = getAttributeValue(parser, "reference")
-        val defaultAccountId: String = getAttributeValue(parser, "defaultaccountid")
-        val isMatchingEnabled: Boolean = getAttributeValue(parser, "matchingenabled") == "1"
-        val isUsingMatchKey: Boolean = getAttributeValue(parser, "usingmatchkey") == "1"
-        val isMatchKeyIgnoreCase: Boolean = getAttributeValue(parser, "matchignorecase") == "1"
-        val matchKey: String = getAttributeValue(parser, "matchkey")
+        val id: String = getAttributeValue(parser, Payee::id)
+        val name: String = getAttributeValue(parser, Payee::name)
+        val email: String = getAttributeValue(parser, Payee::email)
+        val notes: String = getAttributeValue(parser, Payee::notes)
+        val reference: String = getAttributeValue(parser, Payee::reference)
+        val defaultAccountId: String = getAttributeValue(parser, Payee::defaultAccountId)
+        val isMatchingEnabled: Boolean = getAttributeValue(parser, Payee::isMatchingEnabled) == "1"
+        val isUsingMatchKey: Boolean = getAttributeValue(parser, Payee::isUsingMatchKey) == "1"
+        val isMatchKeyIgnoreCase: Boolean = getAttributeValue(parser, Payee::isMatchKeyIgnoreCase) == "1"
+        val matchKey: String = getAttributeValue(parser, Payee::matchKey)
 
         var address: Address? = null
         val identifiers: MutableList<IPayeeIdentifier> = mutableListOf()
@@ -52,17 +43,17 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseHandler(), IXmlPayeesHandle
                     when (getAttributeValue(xmlParser,"type")) {
                         PayeeIdentifierType.IbanBic.id -> identifiers.add(
                             IbanBicPayeeIdentifier(
-                                iban = getAttributeValue(xmlParser, "iban"),
-                                bic =  getAttributeValue(xmlParser, "bic"),
-                                ownerName = getAttributeValue(xmlParser, "ownerName")
+                                iban = getAttributeValue(xmlParser, IbanBicPayeeIdentifier::iban),
+                                bic =  getAttributeValue(xmlParser, IbanBicPayeeIdentifier::bic),
+                                ownerName = getAttributeValue(xmlParser, IbanBicPayeeIdentifier::ownerName)
                             )
                         )
                         PayeeIdentifierType.NationalAccount.id -> identifiers.add(
                             NationalAccountPayeeIdentifier(
-                                bankCode = getAttributeValue(xmlParser, "bankcode"),
-                                accountNumber = getAttributeValue(xmlParser, "accountnumber"),
-                                country = getAttributeValue(xmlParser, "country"),
-                                ownerName = getAttributeValue(xmlParser, "ownername")
+                                bankCode = getAttributeValue(xmlParser, NationalAccountPayeeIdentifier::bankCode),
+                                accountNumber = getAttributeValue(xmlParser, NationalAccountPayeeIdentifier::accountNumber),
+                                country = getAttributeValue(xmlParser, NationalAccountPayeeIdentifier::country),
+                                ownerName = getAttributeValue(xmlParser, NationalAccountPayeeIdentifier::ownerName)
                             )
                         )
                     }
