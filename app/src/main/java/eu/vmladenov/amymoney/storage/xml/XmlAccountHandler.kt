@@ -36,14 +36,14 @@ class XmlAccountHandler: XmlBaseCollectionHandler<Account>(XmlTags.Accounts, Xml
             extra = extraData
         )
 
-        parseChildren(parser, XmlTags.Account) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             when (tagName) {
                 XmlTags.SubAccounts ->
-                    subAccountIds.addAll(readIdList(xmlParser, XmlTags.SubAccounts, XmlTags.SubAccount))
+                    subAccountIds.addAll(readIdList(xmlParser, XmlTags.SubAccount))
                 XmlTags.KeyValuePairs ->
                     extraData.putAll(readKeyValuePairs(xmlParser))
                 else ->
-                    throw XmlParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
+                    throw XmlParseException(tagName, "Unknown tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
 

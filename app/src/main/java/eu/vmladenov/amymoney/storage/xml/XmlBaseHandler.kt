@@ -34,9 +34,10 @@ abstract class XmlBaseHandler {
         throw Exception("Property has no XmlAttribute annotation. Use name: String overload.")
     }
 
-    protected fun <T> readChild(parser: XmlPullParser, parentTag: XmlTags, childTag: XmlTags, handler: (parser: XmlPullParser) -> T): T {
+    protected fun <T> readChild(parser: XmlPullParser, childTag: XmlTags, handler: (parser: XmlPullParser) -> T): T {
         var child: T? = null
-        parseChildren(parser, parentTag) {tagName, xmlParser ->
+        val parentTag = XmlTags[parser.name]
+        parseChildren(parser) {tagName, xmlParser ->
             if (tagName == childTag) {
                 child = handler(xmlParser)
                 return@parseChildren
@@ -48,7 +49,8 @@ abstract class XmlBaseHandler {
         return child!!
     }
 
-    protected fun parseChildren(parser: XmlPullParser, parentTag: XmlTags, handler: (tagName: XmlTags, parser: XmlPullParser) -> Unit) {
+    protected fun parseChildren(parser: XmlPullParser, handler: (tagName: XmlTags, parser: XmlPullParser) -> Unit) {
+        val parentTag = XmlTags[parser.name]
         do {
             val eventType = parser.nextTag()
             val tagName = XmlTags[parser.name]
@@ -58,10 +60,9 @@ abstract class XmlBaseHandler {
         } while (!(eventType == XmlPullParser.END_TAG && tagName == parentTag))
     }
 
-    protected fun readIdList(parser: XmlPullParser, parentTag: XmlTags, childTag: XmlTags): List<String> {
-        parser.require(XmlPullParser.START_TAG, null, parentTag.tagName)
+    protected fun readIdList(parser: XmlPullParser, childTag: XmlTags): List<String> {
         val result = mutableListOf<String>()
-        parseChildren(parser, parentTag) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             if (tagName == childTag) {
                 val id = getAttributeValue(xmlParser, "id")
                 result.add(id)
@@ -73,7 +74,7 @@ abstract class XmlBaseHandler {
     protected fun readKeyValuePairs(parser: XmlPullParser): Map<String, String> {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.KeyValuePairs.tagName)
         val result = mutableMapOf<String, String>()
-        parseChildren(parser, XmlTags.KeyValuePairs) { pair, xmlParser ->
+        parseChildren(parser) { pair, xmlParser ->
             if (pair == XmlTags.Pair) {
                 val key = getAttributeValue(xmlParser, "key")
                 val value = getAttributeValue(xmlParser, "value")

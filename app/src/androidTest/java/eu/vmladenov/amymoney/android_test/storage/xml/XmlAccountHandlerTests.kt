@@ -7,8 +7,6 @@ import org.junit.Test
 import java.util.*
 
 class XmlAccountHandlerTests : BaseXmlHandlerTest() {
-    lateinit var service: XmlAccountHandler
-
     @Test
     fun shouldParseAccount() {
         val parser = createParser(
@@ -30,7 +28,7 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
     </ACCOUNT>
 </ACCOUNTS>"""
         )
-        service = XmlAccountHandler()
+        val service = XmlAccountHandler()
         val accounts = service.read(parser)
 
         Assert.assertEquals(1, accounts.size)
@@ -68,7 +66,7 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
   <ACCOUNT description="" lastmodified="" name="Electricity" number="" type="13" parentaccount="A000033" lastreconciled="" id="A000034" opened="1900-01-01" institution="" currency="EUR"/>
 </ACCOUNTS>"""
         )
-        service = XmlAccountHandler()
+        val service = XmlAccountHandler()
         val accounts = service.read(parser)
         Assert.assertEquals(2, accounts.size)
         val account0 = accounts[0]

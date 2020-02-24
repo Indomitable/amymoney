@@ -17,7 +17,7 @@ class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
             email = getAttributeValue(parser, User::email),
             address = Address()
         )
-        readChild(parser, XmlTags.User, XmlTags.Address) {
+        readChild(parser, XmlTags.Address) {
             user.address.city = getAttributeValue(it, "city")
             user.address.country = getAttributeValue(it, "county")
             user.address.postCode = getAttributeValue(it, "zipcode")

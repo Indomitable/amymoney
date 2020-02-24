@@ -8,7 +8,7 @@ abstract class XmlBaseCollectionHandler<TChild>(private val parentTag: XmlTags, 
         parser.require(XmlPullParser.START_TAG, null, parentTag.tagName)
         val children = mutableListOf<TChild>()
 
-        parseChildren(parser, parentTag) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             if (tagName == childTag) {
                 children.add(readChild(xmlParser))
             }

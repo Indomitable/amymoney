@@ -18,7 +18,7 @@ class XmlFileInfoHandler @Inject constructor() : XmlBaseHandler(), IXmlFileInfoH
         var version: Int? = null
         var fixVersion: Int? = null
 
-        parseChildren(parser, XmlTags.FileInfo) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             when (tagName) {
                 XmlTags.CreationDate ->
                     creationDate = dateFormat.parse(getAttributeValue(xmlParser, "date"))

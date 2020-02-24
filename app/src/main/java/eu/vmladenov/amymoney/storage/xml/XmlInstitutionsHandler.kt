@@ -29,7 +29,7 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
             extra = extraData,
             address = Address()
         )
-        parseChildren(parser, XmlTags.Institution) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             when (tagName) {
                 XmlTags.Address -> {
                     institution.address.city = getAttributeValue(xmlParser, "city")
@@ -39,10 +39,10 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
                     institution.address.telephone = getAttributeValue(xmlParser, "telephone")
                 }
                 XmlTags.AccountIds ->
-                    accountIds.addAll(readIdList(xmlParser, XmlTags.AccountIds, XmlTags.AccountId))
+                    accountIds.addAll(readIdList(xmlParser, XmlTags.AccountId))
                 XmlTags.KeyValuePairs ->
                     extraData.putAll(readKeyValuePairs(xmlParser))
-                else -> throw XmlParseException(tagName, "Unkwnon tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
+                else -> throw XmlParseException(tagName, "Unknown tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
         return institution

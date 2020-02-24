@@ -32,7 +32,7 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(Xm
             identifiers = identifiers
         )
 
-        parseChildren(parser, XmlTags.Payee) { tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             when (tagName) {
                 XmlTags.Address -> {
                     payee.address.city = getAttributeValue(xmlParser, "city")
