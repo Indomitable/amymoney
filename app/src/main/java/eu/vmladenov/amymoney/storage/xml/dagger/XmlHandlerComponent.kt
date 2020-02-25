@@ -4,8 +4,8 @@ import dagger.Subcomponent
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import javax.inject.Singleton
 
-@Subcomponent(modules = [XmlHandlerModule::class] )
 @Singleton
+@Subcomponent(modules = [XmlHandlerModule::class] )
 interface XmlHandlerComponent {
 
     fun getXmlFileReader(): IXmlFileHandler

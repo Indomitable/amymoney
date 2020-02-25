@@ -1,10 +1,19 @@
 package eu.vmladenov.amymoney.dagger
 
 import dagger.Component
+import dagger.Module
+import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.storage.xml.dagger.XmlHandlerComponent
 import javax.inject.Singleton
 
-@Component
-interface AppComponent {
-    fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
+//@Module(subcomponents = [XmlHandlerComponent::class])
+//internal class AppModule
+
+@Component // (modules = [AppModule::class])
+abstract class AppComponent {
+    val xmlHandlerComponent: Lazy<XmlHandlerComponent> = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        getXmlHandlerComponentFactory().create()
+    }
+
+    abstract fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
 }

@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        xmlHandler = (applicationContext as AMyMoneyApplication).injector.getXmlHandlerComponentFactory().create().getXmlFileReader()
+        xmlHandler = (applicationContext as AMyMoneyApplication).injector.xmlHandlerComponent.value.getXmlFileReader()
         val button = findViewById<Button>(R.id.openFile)
         button.setOnClickListener {
             val intent = Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT)

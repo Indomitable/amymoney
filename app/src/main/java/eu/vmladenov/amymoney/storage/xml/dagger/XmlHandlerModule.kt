@@ -5,6 +5,7 @@ import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import eu.vmladenov.amymoney.storage.xml.*
+import javax.inject.Singleton
 
 @MapKey
 annotation class XmlTagsKey(val value: XmlTags)
@@ -12,6 +13,7 @@ annotation class XmlTagsKey(val value: XmlTags)
 @Module
 abstract class XmlHandlerModule {
     @Binds
+    @Singleton
     abstract fun bindFileHandler(fileHandler: XmlFileHandler): IXmlFileHandler
 
     @Binds

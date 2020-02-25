@@ -3,15 +3,13 @@ package eu.vmladenov.amymoney.storage.xml
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
-import javax.inject.Singleton
 
 interface IXmlFileHandler {
     fun read(parser: XmlPullParser): KMyMoneyState
 }
 
-@Singleton
 class XmlFileHandler @Inject constructor(
-    private val handlers: Map<XmlTags, @JvmSuppressWildcards IXmlFileTagHandler>
+    val handlers: Map<XmlTags, @JvmSuppressWildcards IXmlFileTagHandler>
 ): IXmlFileHandler {
 
     override fun read(parser: XmlPullParser): KMyMoneyState {
