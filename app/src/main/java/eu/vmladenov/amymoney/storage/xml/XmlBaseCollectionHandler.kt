@@ -2,7 +2,7 @@ package eu.vmladenov.amymoney.storage.xml
 
 import org.xmlpull.v1.XmlPullParser
 
-abstract class XmlBaseCollectionHandler<TChild>(private val parentTag: XmlTags, private val childTag: XmlTags): XmlBaseHandler() {
+abstract class XmlBaseCollectionHandler<TChild>(protected val parentTag: XmlTags, protected val childTag: XmlTags): XmlBaseHandler() {
 
     protected fun readChildren(parser: XmlPullParser): List<TChild> {
         parser.require(XmlPullParser.START_TAG, null, parentTag.tagName)

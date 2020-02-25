@@ -3,11 +3,13 @@ package eu.vmladenov.amymoney.storage.xml
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface IXmlCostCentersHandler {
     fun read(parser: XmlPullParser): CostCenters
 }
 
+@Singleton
 class XmlCostCentersHandler @Inject constructor(): XmlBaseCollectionHandler<CostCenter>(XmlTags.CostCenters, XmlTags.CostCenter), IXmlCostCentersHandler {
     override fun read(parser: XmlPullParser): CostCenters {
         return CostCenters(readChildren(parser))
@@ -19,5 +21,9 @@ class XmlCostCentersHandler @Inject constructor(): XmlBaseCollectionHandler<Cost
             getAttributeValue(parser, CostCenter::id),
             getAttributeValue(parser, CostCenter::name)
         )
+    }
+
+    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
+        file.costCenters = read(parser)
     }
 }

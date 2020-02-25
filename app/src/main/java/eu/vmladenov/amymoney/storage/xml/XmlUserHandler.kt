@@ -1,14 +1,17 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.models.Address
+import eu.vmladenov.amymoney.models.KMyMoneyFile
 import eu.vmladenov.amymoney.models.User
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface IXmlUserHandler {
     fun read(parser: XmlPullParser): User
 }
 
+@Singleton
 class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
     override fun read(parser: XmlPullParser): User {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.User.tagName)
@@ -25,5 +28,9 @@ class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
             user.address.telephone = getAttributeValue(it, "telephone")
         }
         return user
+    }
+
+    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
+        file.user = read(parser)
     }
 }

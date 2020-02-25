@@ -1,35 +1,66 @@
 package eu.vmladenov.amymoney.storage.xml.dagger
 
 import dagger.Binds
+import dagger.MapKey
 import dagger.Module
+import dagger.multibindings.IntoMap
 import eu.vmladenov.amymoney.storage.xml.*
+
+@MapKey
+annotation class XmlTagsKey(val value: XmlTags)
 
 @Module
 abstract class XmlHandlerModule {
     @Binds
-    abstract fun bindFileHandler(fileReader: XmlFileHandler): IXmlFileHandler
+    abstract fun bindFileHandler(fileHandler: XmlFileHandler): IXmlFileHandler
 
     @Binds
-    abstract fun bindFileInfoHandler(fileInfoReader: XmlFileInfoHandler): IXmlFileInfoHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.FileInfo)
+    abstract fun bindFileInfoHandler(institutionsHandler: XmlFileInfoHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindUserHandler(userReader: XmlUserHandler): IXmlUserHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.User)
+    abstract fun bindUserHandler(institutionsHandler: XmlUserHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindInstitutionsHandler(institutionsHandler: XmlInstitutionsHandler): IXmlInstitutionsHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.Institutions)
+    abstract fun bindInstitutionsHandler(institutionsHandler: XmlInstitutionsHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindPayeesHandler(payeesHandler: XmlPayeesHandler): IXmlPayeesHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.Payees)
+    abstract fun bindPayeesHandler(payeesHandler: XmlPayeesHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindCostCentersHandler(costCentersHandler: XmlCostCentersHandler): IXmlCostCentersHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.CostCenters)
+    abstract fun bindCostCentersHandler(costCentersHandler: XmlCostCentersHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindTagsHandler(tagsHandler: XmlTagsHandler): IXmlTagsHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.Tags)
+    abstract fun bindTagsHandler(tagsHandler: XmlTagsHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindAccountsHandler(accountHandler: XmlAccountHandler): IXmlAccountHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.Accounts)
+    abstract fun bindAccountsHandler(accountHandler: XmlAccountHandler): IXmlFileTagHandler
 
     @Binds
-    abstract fun bindTransactionsHandler(transactionsHandler: XmlTransactionsHandler): IXmlTransactionsHandler
+    @IntoMap
+    @XmlTagsKey(XmlTags.Transactions)
+    abstract fun bindTransactionsHandler(transactionsHandler: XmlTransactionsHandler): IXmlFileTagHandler
+
+    @Binds
+    @IntoMap
+    @XmlTagsKey(XmlTags.Securities)
+    abstract fun bindSecuritiesHandler(securitiesHandler: XmlSecuritiesHandler): IXmlFileTagHandler
+
+    @Binds
+    @IntoMap
+    @XmlTagsKey(XmlTags.Currencies)
+    abstract fun bindCurrenciesHandler(currenciesHandler: XmlCurrenciesHandler): IXmlFileTagHandler
 }

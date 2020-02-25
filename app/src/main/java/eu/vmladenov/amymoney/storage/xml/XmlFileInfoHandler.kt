@@ -1,14 +1,17 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.models.FileInfo
+import eu.vmladenov.amymoney.models.KMyMoneyFile
 import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface IXmlFileInfoHandler {
     fun read(parser: XmlPullParser): FileInfo
 }
 
+@Singleton
 class XmlFileInfoHandler @Inject constructor() : XmlBaseHandler(), IXmlFileInfoHandler {
     override fun read(parser: XmlPullParser): FileInfo {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.FileInfo.tagName)
@@ -33,5 +36,9 @@ class XmlFileInfoHandler @Inject constructor() : XmlBaseHandler(), IXmlFileInfoH
             }
         }
         return FileInfo(creationDate!!, lastModifyDate!!, version!!, fixVersion!!)
+    }
+
+    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
+        file.fileInfo = read(parser)
     }
 }

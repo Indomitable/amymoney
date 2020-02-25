@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.models.KMyMoneyFile
 import eu.vmladenov.amymoney.models.XmlAttribute
 import eu.vmladenov.amymoney.models.XmlTag
 import org.xmlpull.v1.XmlPullParser
@@ -10,7 +11,14 @@ import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
-abstract class XmlBaseHandler {
+interface IXmlFileTagHandler {
+    fun update(parser: XmlPullParser, file: KMyMoneyFile)
+}
+
+abstract class XmlBaseHandler: IXmlFileTagHandler {
+
+    // abstract override fun update(file: KMyMoneyFile)
+
     protected val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
 
     protected fun getAttributeValue(parser: XmlPullParser, name: String): String {
