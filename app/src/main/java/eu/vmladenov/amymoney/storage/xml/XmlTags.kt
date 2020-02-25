@@ -29,7 +29,11 @@ enum class XmlTags(val tagName: String) {
     Transactions("TRANSACTIONS"),
     Transaction("TRANSACTION"),
     Splits("SPLITS"),
-    Split("SPLIT");
+    Split("SPLIT"),
+    Currencies("CURRENCIES"),
+    Currency("CURRENCY"),
+    Securities("SECURITIES"),
+    Security("SECURITY");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)
