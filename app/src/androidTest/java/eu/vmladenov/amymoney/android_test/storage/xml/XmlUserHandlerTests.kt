@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 
 class XmlUserHandlerTests: BaseXmlHandlerTest() {
-    lateinit var service: XmlUserHandler
+    private lateinit var service: XmlUserHandler
 
     @Before
     fun setup() {

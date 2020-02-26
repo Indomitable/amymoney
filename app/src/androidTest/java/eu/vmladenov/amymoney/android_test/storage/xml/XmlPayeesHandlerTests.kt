@@ -9,7 +9,7 @@ import org.junit.Before
 import org.junit.Test
 
 class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
-    lateinit var service: XmlPayeesHandler
+    private lateinit var service: XmlPayeesHandler
 
     @Before
     fun setup() {

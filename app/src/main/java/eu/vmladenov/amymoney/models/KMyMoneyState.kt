@@ -14,6 +14,9 @@ class KMyMoneyFile {
     var transactions: Transactions? = null
     var securities: Securities? = null
     var currencies: Securities? = null
+    var prices: Prices? = null
+    val unsupportedTags = mutableListOf<UnsupportedTag>()
+    val extra = mutableMapOf<String, String>()
 
     fun state(): KMyMoneyState {
         return KMyMoneyState(
@@ -26,7 +29,10 @@ class KMyMoneyFile {
             accounts = accounts ?: Accounts(emptyList()),
             transactions = transactions ?: Transactions(emptyList()),
             securities = securities ?: Securities(emptyList()),
-            currencies = currencies ?: Securities(emptyList())
+            currencies = currencies ?: Securities(emptyList()),
+            prices = prices ?: Prices(emptyList()),
+            extra = extra,
+            unsupportedTags = unsupportedTags
         )
     }
 }
@@ -41,5 +47,8 @@ data class KMyMoneyState(
     val accounts: Accounts,
     val transactions: Transactions,
     val securities: Securities,
-    val currencies: Securities
+    val currencies: Securities,
+    val prices: Prices,
+    val extra: Map<String, String>,
+    val unsupportedTags: List<UnsupportedTag>
 )

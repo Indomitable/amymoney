@@ -7,7 +7,7 @@ import org.junit.Test
 import java.util.*
 
 class XmlFileInfoTests: BaseXmlHandlerTest() {
-    lateinit var service: XmlFileInfoHandler
+    private lateinit var service: XmlFileInfoHandler
 
     @Before
     fun setup() {

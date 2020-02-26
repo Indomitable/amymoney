@@ -8,7 +8,7 @@ import org.junit.Test
 import java.util.*
 
 class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
-    lateinit var service: XmlTransactionsHandler
+    private lateinit var service: XmlTransactionsHandler
 
     @Before
     fun setup() {

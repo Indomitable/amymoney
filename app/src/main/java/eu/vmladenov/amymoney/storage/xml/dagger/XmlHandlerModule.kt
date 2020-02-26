@@ -65,4 +65,19 @@ abstract class XmlHandlerModule {
     @IntoMap
     @XmlTagsKey(XmlTags.Currencies)
     abstract fun bindCurrenciesHandler(currenciesHandler: XmlCurrenciesHandler): IXmlFileTagHandler
+
+    @Binds
+    @IntoMap
+    @XmlTagsKey(XmlTags.Prices)
+    abstract fun bindPricesHandler(pricesHandler: XmlPricesHandler): IXmlFileTagHandler
+
+    @Binds
+    @IntoMap
+    @XmlTagsKey(XmlTags.KeyValuePairs)
+    abstract fun bindKeyValuesHandler(keyValuesHandler: XmlKeyValuesHandler): IXmlFileTagHandler
+
+    @Binds
+    @IntoMap
+    @XmlTagsKey(XmlTags.Unknown)
+    abstract fun bindUnknownHandler(unsupportedTagHandler: XmlUnsupportedHandler): IXmlFileTagHandler
 }

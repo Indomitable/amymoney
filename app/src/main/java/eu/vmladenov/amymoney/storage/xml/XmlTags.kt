@@ -33,7 +33,10 @@ enum class XmlTags(val tagName: String) {
     Currencies("CURRENCIES"),
     Currency("CURRENCY"),
     Securities("SECURITIES"),
-    Security("SECURITY");
+    Security("SECURITY"),
+    Prices("PRICES"),
+    PricePair("PRICEPAIR"),
+    Price("PRICE");
 
     companion object {
         private val map = values().associateBy(XmlTags::tagName)

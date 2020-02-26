@@ -17,8 +17,6 @@ interface IXmlFileTagHandler {
 
 abstract class XmlBaseHandler: IXmlFileTagHandler {
 
-    // abstract override fun update(file: KMyMoneyFile)
-
     protected val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
 
     protected fun getAttributeValue(parser: XmlPullParser, name: String): String {
@@ -66,6 +64,19 @@ abstract class XmlBaseHandler: IXmlFileTagHandler {
                 handler(tagName, parser)
             }
         } while (!(eventType == XmlPullParser.END_TAG && tagName == parentTag))
+    }
+
+    protected fun <TChild> iterChildren(parser: XmlPullParser, handler: (tagName: XmlTags, parser: XmlPullParser) -> TChild): Sequence<TChild> {
+        val parentTag = XmlTags[parser.name]
+        return sequence {
+            do {
+                val eventType = parser.nextTag()
+                val tagName = XmlTags[parser.name]
+                if (eventType == XmlPullParser.START_TAG) {
+                    yield(handler(tagName, parser))
+                }
+            } while (!(eventType == XmlPullParser.END_TAG && tagName == parentTag))
+        }
     }
 
     protected fun readIdList(parser: XmlPullParser, childTag: XmlTags): List<String> {
