@@ -24,6 +24,7 @@ class XmlAccountHandler @Inject constructor(): XmlBaseCollectionHandler<Account>
 
     override fun readChild(parser: XmlPullParser): Account {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Account.tagName)
+        checkUnsupportedAttributes(parser, Account::class)
 
         val subAccountIds = mutableListOf<String>()
         val extraData = mutableMapOf<String, String>()

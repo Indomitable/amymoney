@@ -24,6 +24,7 @@ class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<In
 
     override fun readChild(parser: XmlPullParser): Institution {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Institution.tagName)
+        checkUnsupportedAttributes(parser, Institution::class)
 
         val accountIds = mutableListOf<String>()
         val extraData = mutableMapOf<String, String>()

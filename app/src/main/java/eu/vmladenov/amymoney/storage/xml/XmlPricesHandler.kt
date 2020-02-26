@@ -22,11 +22,11 @@ class XmlPricesHandler @Inject constructor(): XmlBaseCollectionHandler<PricePair
     }
 
     override fun readChild(parser: XmlPullParser): PricePair {
-
         return PricePair (
             from = getAttributeValue(parser, PricePair::from),
             to = getAttributeValue(parser, PricePair::to),
             prices = iterChildren(parser) { _, priceParser ->
+                checkUnsupportedAttributes(parser, Price::class)
                 return@iterChildren Price(
                     source = getAttributeValue(priceParser, Price::source),
                     price = getAttributeValue(priceParser, Price::price),

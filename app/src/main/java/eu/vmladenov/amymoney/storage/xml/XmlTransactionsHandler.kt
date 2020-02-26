@@ -21,6 +21,8 @@ class XmlTransactionsHandler @Inject constructor(): XmlBaseCollectionHandler<Tra
 
     override fun readChild(parser: XmlPullParser): Transaction {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Transaction.tagName)
+        checkUnsupportedAttributes(parser, Transaction::class)
+
         val extraData = mutableMapOf<String, String>()
         val transaction = Transaction(
             id = getAttributeValue(parser, Transaction::id),
@@ -52,6 +54,8 @@ class XmlTransactionsHandler @Inject constructor(): XmlBaseCollectionHandler<Tra
     }
 
     private fun readSplit(parser: XmlPullParser): Split {
+        checkUnsupportedAttributes(parser, Split::class)
+
         val tagIds = mutableListOf<String>()
         val extraData = mutableMapOf<String, String>()
         val split = Split(

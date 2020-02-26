@@ -17,6 +17,7 @@ class XmlCostCentersHandler @Inject constructor(): XmlBaseCollectionHandler<Cost
 
     override fun readChild(parser: XmlPullParser): CostCenter {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.CostCenter.tagName)
+        checkUnsupportedAttributes(parser, CostCenter::class)
         return CostCenter(
             getAttributeValue(parser, CostCenter::id),
             getAttributeValue(parser, CostCenter::name)

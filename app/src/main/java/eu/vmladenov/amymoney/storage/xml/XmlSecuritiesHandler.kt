@@ -20,6 +20,7 @@ abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): 
 
     override fun readChild(parser: XmlPullParser): Security {
         parser.require(XmlPullParser.START_TAG, null, childTag.tagName)
+        checkUnsupportedAttributes(parser, Security::class)
 
         fun getSmallestAccountFraction(): Int {
             val saf = getAttributeValue(parser, Security::smallestAccountFraction)

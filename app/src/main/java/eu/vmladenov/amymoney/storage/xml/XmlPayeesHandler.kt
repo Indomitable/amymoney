@@ -22,6 +22,7 @@ class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(Xm
 
     override fun readChild(parser: XmlPullParser): Payee {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Payee.tagName)
+        checkUnsupportedAttributes(parser, Payee::class)
 
         val identifiers: MutableList<IPayeeIdentifier> = mutableListOf()
         val payee = Payee (

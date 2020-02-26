@@ -21,6 +21,8 @@ class XmlTagsHandler @Inject constructor(): XmlBaseCollectionHandler<Tag>(XmlTag
 
     override fun readChild(parser: XmlPullParser): Tag {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Tag.tagName)
+        checkUnsupportedAttributes(parser, Tag::class)
+
         return Tag(
             getAttributeValue(parser, Tag::id),
             getAttributeValue(parser, Tag::name),

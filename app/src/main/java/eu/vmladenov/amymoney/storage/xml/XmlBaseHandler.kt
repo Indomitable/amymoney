@@ -10,12 +10,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 interface IXmlFileTagHandler {
     fun update(parser: XmlPullParser, file: KMyMoneyFile)
 }
 
-abstract class XmlBaseHandler: IXmlFileTagHandler {
+abstract class XmlBaseHandler : IXmlFileTagHandler {
 
     protected val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ROOT)
 
@@ -35,7 +36,11 @@ abstract class XmlBaseHandler: IXmlFileTagHandler {
         val attribute = name.annotations.find { a -> a is XmlAttribute } as? XmlAttribute
         if (attribute != null) {
             val value = getAttributeValue(parser, attribute.value)
-            return try { dateFormat.parse(value) } catch (e: ParseException) { null }
+            return try {
+                dateFormat.parse(value)
+            } catch (e: ParseException) {
+                null
+            }
         }
         throw Exception("Property has no XmlAttribute annotation. Use name: String overload.")
     }
@@ -43,7 +48,7 @@ abstract class XmlBaseHandler: IXmlFileTagHandler {
     protected fun <T> readChild(parser: XmlPullParser, childTag: XmlTags, handler: (parser: XmlPullParser) -> T): T {
         var child: T? = null
         val parentTag = XmlTags[parser.name]
-        parseChildren(parser) {tagName, xmlParser ->
+        parseChildren(parser) { tagName, xmlParser ->
             if (tagName == childTag) {
                 child = handler(xmlParser)
                 return@parseChildren
@@ -109,5 +114,22 @@ abstract class XmlBaseHandler: IXmlFileTagHandler {
             return tagAnnotation.value
         }
         throw Exception("Class ${type.simpleName} has no XmlTag annotation")
+    }
+
+    protected fun checkUnsupportedAttributes(parser: XmlPullParser, type: KClass<*>) {
+        val knowAttributes: List<String> = type.memberProperties
+            .mapNotNull { p ->
+                p.annotations.find { a -> a is XmlAttribute } as? XmlAttribute
+            }
+            .map { a -> a.value }
+        for (i in 0 until parser.attributeCount) {
+            val attributeName = parser.getAttributeName(i)
+            if (!knowAttributes.contains(attributeName)) {
+                throw XmlParseException(
+                    XmlTags[parser.name],
+                    "Not supported attribute found for tag ${parser.name}, attribute: ${attributeName}. Line: ${parser.lineNumber}"
+                )
+            }
+        }
     }
 }
