@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.models.KMyMoneyFile
 import eu.vmladenov.amymoney.models.Price
 import eu.vmladenov.amymoney.models.PricePair
@@ -29,7 +30,7 @@ class XmlPricesHandler @Inject constructor(): XmlBaseCollectionHandler<PricePair
                 checkUnsupportedAttributes(parser, Price::class)
                 return@iterChildren Price(
                     source = getAttributeValue(priceParser, Price::source),
-                    price = getAttributeValue(priceParser, Price::price),
+                    price = Fraction.parseFraction(getAttributeValue(priceParser, Price::price)),
                     date = getDateAttributeValue(priceParser, Price::date) ?: defaultPriceDate
                 )
             }.toList()

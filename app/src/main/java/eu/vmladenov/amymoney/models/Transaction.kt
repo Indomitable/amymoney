@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.models
 
+import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.storage.xml.XmlTags
 import java.util.*
 
@@ -26,9 +27,9 @@ enum class ReconciledState(val value: Int) {
 @XmlTag(XmlTags.Split)
 data class Split(
     @XmlAttribute("id") val id: String,
-    @XmlAttribute("shares") val shares: String,
-    @XmlAttribute("price") val price: String,
-    @XmlAttribute("value") val value: String,
+    @XmlAttribute("shares") val shares: Fraction,
+    @XmlAttribute("price") val price: Fraction,
+    @XmlAttribute("value") val value: Fraction,
     @XmlAttribute("account") val accountId: String,
     @XmlAttribute("costcenter") val constCenterId: String,
     @XmlAttribute("reconcileflag") val reconcileFlag: ReconciledState,

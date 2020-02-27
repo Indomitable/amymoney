@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Xml
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import eu.vmladenov.amymoney.models.KMyMoneyState
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import java.util.zip.GZIPInputStream
 
@@ -35,10 +36,18 @@ class MainActivity : AppCompatActivity() {
                     val parser = Xml.newPullParser()
                     parser.setInput(stream, "utf-8")
                     val file = xmlHandler.read(parser)
+                    handle(file)
                 }
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    fun handle(state: KMyMoneyState) {
+//        val account = state.accounts.find { i -> i.id == "A000001" }!!
+//        state.transactions.reduce { acc, transaction ->
+//
+//        }
     }
 }

@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
@@ -60,9 +61,9 @@ class XmlTransactionsHandler @Inject constructor(): XmlBaseCollectionHandler<Tra
         val extraData = mutableMapOf<String, String>()
         val split = Split(
             id = getAttributeValue(parser, Split::id),
-            shares = getAttributeValue(parser, Split::shares),
-            price = getAttributeValue(parser, Split::price),
-            value = getAttributeValue(parser, Split::value),
+            shares = Fraction.parseFraction(getAttributeValue(parser, Split::shares)),
+            price = Fraction.parseFraction(getAttributeValue(parser, Split::price)),
+            value = Fraction.parseFraction(getAttributeValue(parser, Split::value)),
             accountId = getAttributeValue(parser, Split::accountId),
             constCenterId = getAttributeValue(parser, Split::constCenterId),
             reconcileFlag = ReconciledState.fromAttribute(getAttributeValue(parser, Split::reconcileFlag)),
