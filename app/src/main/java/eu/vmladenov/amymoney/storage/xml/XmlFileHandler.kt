@@ -5,7 +5,7 @@ import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 
 interface IXmlFileHandler {
-    fun read(parser: XmlPullParser): KMyMoneyState
+    fun read(parser: XmlPullParser): KMyMoneyModel
 }
 
 class XmlFileHandler @Inject constructor(
@@ -13,7 +13,7 @@ class XmlFileHandler @Inject constructor(
 ): IXmlFileHandler {
     private val kMyMoneyFileTagName = "KMYMONEY-FILE"
 
-    override fun read(parser: XmlPullParser): KMyMoneyState {
+    override fun read(parser: XmlPullParser): KMyMoneyModel {
         var eventType = parser.eventType
         val file = KMyMoneyFile()
         while (eventType != XmlPullParser.END_DOCUMENT) {
@@ -32,6 +32,6 @@ class XmlFileHandler @Inject constructor(
             }
             eventType = parser.next()
         }
-        return file.state()
+        return file.model()
     }
 }

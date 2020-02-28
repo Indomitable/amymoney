@@ -18,8 +18,8 @@ class KMyMoneyFile {
     val unsupportedTags = mutableListOf<UnsupportedTag>()
     val extra = mutableMapOf<String, String>()
 
-    fun state(): KMyMoneyState {
-        return KMyMoneyState(
+    fun model(): KMyMoneyModel {
+        return KMyMoneyModel(
             fileInfo = fileInfo ?: throw XmlParseException(XmlTags.FileInfo, "No File info tag is found"),
             user = user ?: User(),
             institutions = institutions ?: Institutions(emptyList()),
@@ -37,7 +37,7 @@ class KMyMoneyFile {
     }
 }
 
-data class KMyMoneyState(
+data class KMyMoneyModel(
     val fileInfo: FileInfo,
     val user: User,
     val institutions: Institutions,

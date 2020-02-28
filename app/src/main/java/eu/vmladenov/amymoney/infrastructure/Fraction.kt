@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.infrastructure
 
+import java.math.BigDecimal
 import java.text.ParseException
 
 /**
@@ -13,6 +14,10 @@ class Fraction(val numerator: Long, val denominator: Long) {
         } else {
             this
         }
+    }
+
+    fun toDecimal(): BigDecimal {
+        return BigDecimal(numerator).divide(BigDecimal(denominator))
     }
 
     operator fun component1() = numerator

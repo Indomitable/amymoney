@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AMyMoney</string>
+    <string name="empty_app_state">Application is not initialized.\nPlease select data file</string>
 </resources>

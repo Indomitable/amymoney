@@ -4,50 +4,40 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Xml
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
-import eu.vmladenov.amymoney.models.KMyMoneyState
+import eu.vmladenov.amymoney.infrastructure.Fraction
+import eu.vmladenov.amymoney.models.KMyMoneyModel
+import eu.vmladenov.amymoney.models.Transaction
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
+import eu.vmladenov.amymoney.ui.BaseActivity
+import eu.vmladenov.amymoney.ui.EmptyAppStateActivity
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 import java.util.zip.GZIPInputStream
 
-class MainActivity : AppCompatActivity() {
-    private val FILE_SELECT_REQUEST = 1001
+class MainActivity: BaseActivity() {
 
-    private lateinit var xmlHandler: IXmlFileHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        xmlHandler = (applicationContext as AMyMoneyApplication).injector.xmlHandlerComponent.value.getXmlFileReader()
-        val button = findViewById<Button>(R.id.openFile)
-        button.setOnClickListener {
-            val intent = Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT)
-            startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_SELECT_REQUEST)
+        if (!application.state.isInitialized) {
+            val intent = Intent(this, EmptyAppStateActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        } else {
+            setContentView(R.layout.activity_main)
+            val ammount = displayAmmount()
+            textView2.text = ammount.toDecimal().toString()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val contentResolver = applicationContext.contentResolver
-        if (requestCode == FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
-            val selectedfile = data.data ?: return
-            contentResolver.openInputStream(selectedfile).use { inputStream ->
-                GZIPInputStream(inputStream).use { stream ->
-                    val parser = Xml.newPullParser()
-                    parser.setInput(stream, "utf-8")
-                    val file = xmlHandler.read(parser)
-                    handle(file)
-                }
-            }
+    fun displayAmmount(): Fraction {
+        val model = application.state.model!!
+        val amount = model.transactions
+            .filter { t -> t.postDate!! < GregorianCalendar().time && t.splits.any { s-> s.accountId == "A000001" }  }
+            .fold(Fraction(0, 1)) { acc: Fraction, transaction: Transaction ->
+            val split = transaction.splits.find {it.accountId == "A000001" }!!
+            return@fold acc + split.value
         }
-
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    fun handle(state: KMyMoneyState) {
-//        val account = state.accounts.find { i -> i.id == "A000001" }!!
-//        state.transactions.reduce { acc, transaction ->
-//
-//        }
+        return amount
     }
 }
