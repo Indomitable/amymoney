@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.infrastructure
 
+import java.lang.Exception
 import java.math.BigDecimal
 import java.text.ParseException
 
@@ -7,6 +8,16 @@ import java.text.ParseException
  * Immutable class that works with fractions.
  */
 class Fraction(val numerator: Long, val denominator: Long) {
+
+    // if denominator grows more than the threshold simplify
+    val denominatorThreshold = Integer.MAX_VALUE
+
+    init {
+        if (denominator == 0L) {
+            throw Exception("Invalid Fraction")
+        }
+    }
+
     fun simplify(): Fraction {
         val gcd = getCommonDivisor(numerator, denominator)
         return if (gcd > 1) {
@@ -17,6 +28,9 @@ class Fraction(val numerator: Long, val denominator: Long) {
     }
 
     fun toDecimal(): BigDecimal {
+        if (numerator == 0L || denominator == 0L) {
+            return BigDecimal(0)
+        }
         return BigDecimal(numerator).divide(BigDecimal(denominator))
     }
 
@@ -30,19 +44,23 @@ class Fraction(val numerator: Long, val denominator: Long) {
     operator fun plus(other: Fraction): Fraction {
         val (fn, sn, d) = convertToEqualDenominators(Pair(this, other))
         return Fraction(fn + sn, d)
+            .checkThreshold()
     }
 
     operator fun minus(other: Fraction): Fraction {
         val (fn, sn, d) = convertToEqualDenominators(Pair(this, other))
         return Fraction(fn - sn, d)
+            .checkThreshold()
     }
 
     operator fun times(other: Fraction): Fraction {
         return Fraction(this.numerator * other.numerator, this.denominator * other.denominator)
+            .checkThreshold()
     }
 
     operator fun div(other: Fraction): Fraction {
         return Fraction(this.numerator * other.denominator, this.denominator * other.numerator)
+            .checkThreshold()
     }
 
     operator fun compareTo(other: Fraction): Int {
@@ -62,6 +80,13 @@ class Fraction(val numerator: Long, val denominator: Long) {
         var result = numerator.hashCode()
         result = 31 * result + denominator.hashCode()
         return result
+    }
+
+    private fun checkThreshold(): Fraction {
+        if (denominator >= denominatorThreshold) {
+            return simplify()
+        }
+        return this
     }
 
     companion object {
@@ -100,6 +125,7 @@ class Fraction(val numerator: Long, val denominator: Long) {
             return a
         }
     }
+
 }
 
 

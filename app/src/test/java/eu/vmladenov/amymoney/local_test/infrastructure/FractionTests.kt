@@ -3,6 +3,7 @@ package eu.vmladenov.amymoney.local_test.infrastructure
 import eu.vmladenov.amymoney.infrastructure.Fraction
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
+import java.lang.Exception
 import java.text.ParseException
 
 class FractionTests {
@@ -190,6 +191,14 @@ class FractionTests {
         fun equalOtherType() {
             val f0 = Fraction(3, 4)
             assertFalse(f0.equals(Pair(3, 4)))
+        }
+
+    }
+
+    @Test
+    fun shouldThrowExceptionIfCreatedWithZeroAsDenominator() {
+        assertThrows<Exception> {
+            Fraction(0, 0)
         }
     }
 

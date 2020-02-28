@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Xml
-import eu.vmladenov.amymoney.MainActivity
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import kotlinx.android.synthetic.main.activity_empty_app_state.*
@@ -56,6 +55,7 @@ class EmptyAppStateActivity : BaseActivity() {
 
     private fun redirectToMain() {
         val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 }
