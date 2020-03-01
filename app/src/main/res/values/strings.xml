@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">AMyMoney</string>
-    <string name="empty_app_state">Application is not initialized.\nPlease select data file</string>
+    <string name="empty_app_state">No accounts were found. Please load a KMyMoney data file or create new account</string>
 </resources>

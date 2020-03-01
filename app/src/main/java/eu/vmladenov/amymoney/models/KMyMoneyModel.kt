@@ -51,4 +51,26 @@ data class KMyMoneyModel(
     val prices: Prices,
     val extra: Map<String, String>,
     val unsupportedTags: List<UnsupportedTag>
-)
+) {
+    fun isEmpty() = accounts.size == 0
+
+    companion object {
+        fun empty(): KMyMoneyModel {
+            return KMyMoneyModel(
+                fileInfo = FileInfo.empty(),
+                user = User(),
+                institutions = Institutions(emptyList()),
+                payees = Payees(emptyList()),
+                costCenters = CostCenters(emptyList()),
+                tags = Tags(emptyList()),
+                accounts = Accounts(emptyList()),
+                transactions = Transactions(emptyList()),
+                securities = Securities(emptyList()),
+                currencies = Securities(emptyList()),
+                prices = Prices(emptyList()),
+                extra = emptyMap(),
+                unsupportedTags = emptyList()
+            )
+        }
+    }
+}

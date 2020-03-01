@@ -9,4 +9,17 @@ data class FileInfo(
     val lastModificationDate: Date,
     val version: Int,
     val fixVersion: Int
-)
+) {
+    fun isEmpty() = version == -1
+
+    companion object {
+        fun empty(): FileInfo {
+            return FileInfo(
+                GregorianCalendar().time,
+                GregorianCalendar().time,
+                -1,
+                -1
+            )
+        }
+    }
+}

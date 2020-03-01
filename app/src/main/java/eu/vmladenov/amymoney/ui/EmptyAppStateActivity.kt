@@ -18,10 +18,6 @@ class EmptyAppStateActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (application.state.isInitialized) {
-            redirectToMain()
-            return
-        }
         setContentView(R.layout.activity_empty_app_state)
 
         xmlHandler = injector.xmlHandlerComponent.value.getXmlFileReader()

@@ -1,6 +1,7 @@
 package eu.vmladenov.amymoney.ui
 
 import android.os.Bundle
+import android.view.Menu
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.models.Transaction
@@ -14,12 +15,24 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val ammount = displayAmmount()
-        textView2.text = ammount.toDecimal().toString()
+        setSupportActionBar(mainActivityToolbar)
+        supportActionBar!!.title = ""
+        // mainActivityToolbar.setSubtitle("Test")
+//        mainActivityToolbar.inflateMenu(R.menu.main_menu)
+
+//        val ammount = displayAmmount()
+//        lblEmptyState.text = ammount.toDecimal().toString()
+
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return true
     }
 
     fun displayAmmount(): Fraction {
-        val model = application.state.model!!
+        val model = application.state.model
         val amount = model.transactions
             .filter { t -> t.postDate!! < GregorianCalendar().time && t.splits.any { s -> s.accountId == "A000001" } }
             .fold(Fraction(0, 1)) { acc: Fraction, transaction: Transaction ->

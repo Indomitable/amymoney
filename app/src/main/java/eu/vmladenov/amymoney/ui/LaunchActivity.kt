@@ -10,12 +10,14 @@ class LaunchActivity: Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val state = (applicationContext as AMyMoneyApplication).state
-        if (!state.isInitialized) {
-            startActivity(EmptyAppStateActivity::class.java)
-        } else {
+//        val state = (applicationContext as AMyMoneyApplication).state
+//        if (!state.isInitialized) {
+//            startActivity(EmptyAppStateActivity::class.java)
+//        } else {
             startActivity(MainActivity::class.java)
-        }
+//        }
+
+        finish()
     }
 
     private fun startActivity(cls: Class<*>) {
