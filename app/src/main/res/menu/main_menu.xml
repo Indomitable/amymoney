@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Institutions" />
-    <item android:title="Accounts" />
-    <item android:title="Categories" />
-    <item android:title="Tags" />
-    <item android:title="Payees" />
-    <item android:title="Ledgers" />
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:title="Home"
+            />
+        <item
+            android:id="@+id/nav_institutions"
+            android:title="Institutions"
+            />
+        <item android:title="Accounts" />
+        <item android:title="Categories" />
+        <item android:title="Tags" />
+        <item android:title="Payees" />
+        <item android:title="Ledgers" />
+    </group>
 </menu>

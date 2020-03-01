@@ -10,7 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".ui.LaunchActivity"
+        <activity
+            android:name=".ui.LaunchActivity"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
@@ -19,12 +20,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.EmptyAppStateActivity"
-            android:launchMode="singleTask"
-            />
-        <activity android:name=".ui.MainActivity"
-
-            />
+        <activity
+            android:name=".ui.EmptyAppStateActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".ui.MainActivity" />
     </application>
 
 </manifest>
