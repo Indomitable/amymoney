@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">AMyMoney</string>
-    <string name="empty_app_state">No accounts were found. Please load a KMyMoney data file or create new account</string>
+    <string name="empty_app_state">No accounts found. Please load a KMyMoney data file or create new account</string>
+    <string name="home">Home</string>
+    <string name="institutions">Institutions</string>
+    <string name="accounts">Accounts</string>
+    <string name="categories">Categories</string>
+    <string name="tags">Tags</string>
+    <string name="payees">Payees</string>
+    <string name="ledgers">Ledgers</string>
 </resources>

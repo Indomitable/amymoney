@@ -3,16 +3,16 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Home"
+            android:title="@string/home"
             />
         <item
             android:id="@+id/nav_institutions"
-            android:title="Institutions"
+            android:title="@string/institutions"
             />
-        <item android:title="Accounts" />
-        <item android:title="Categories" />
-        <item android:title="Tags" />
-        <item android:title="Payees" />
-        <item android:title="Ledgers" />
+        <item android:title="@string/accounts" />
+        <item android:title="@string/categories" />
+        <item android:title="@string/tags" />
+        <item android:title="@string/payees" />
+        <item android:title="@string/ledgers" />
     </group>
 </menu>

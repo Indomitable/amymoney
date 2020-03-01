@@ -9,7 +9,7 @@
     tools:showIn="@layout/main_layout">
 
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"

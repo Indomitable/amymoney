@@ -1,8 +1,9 @@
 package eu.vmladenov.amymoney.ui
 
 import android.os.Bundle
-import android.view.Menu
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -11,10 +12,9 @@ import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.models.Transaction
 import kotlinx.android.synthetic.main.main_layout.*
-import kotlinx.android.synthetic.main.content.*
 import kotlinx.android.synthetic.main.main_view.*
-import java.lang.Exception
 import java.util.*
+
 
 class MainActivity : BaseActivity() {
 
@@ -31,7 +31,7 @@ class MainActivity : BaseActivity() {
             mainViewLayout
         )
 
-        val navigationController = findNavController(R.id.main_nav_host_fragment)
+        val navigationController = getNavController()
         setupActionBarWithNavController(
             navigationController,
             appBarConfiguration
@@ -69,7 +69,15 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.main_nav_host_fragment)
+        val navController = getNavController()
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    // https://issuetracker.google.com/issues/142847973
+    // https://stackoverflow.com/questions/50502269/illegalstateexception-link-does-not-have-a-navcontroller-set
+    private fun getNavController(): NavController {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.main_nav_host_fragment) as? NavHostFragment
+        return navHostFragment!!.navController
     }
 }
