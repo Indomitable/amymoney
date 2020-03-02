@@ -6,6 +6,7 @@ import dagger.Module
 import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.dagger.XmlHandlerComponent
+import eu.vmladenov.amymoney.ui.dagger.ViewModelComponent
 import javax.inject.Scope
 
 @Scope
@@ -13,7 +14,7 @@ import javax.inject.Scope
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 annotation class AppScope
 
-@Module(subcomponents = [XmlHandlerComponent::class])
+@Module(subcomponents = [XmlHandlerComponent::class, ViewModelComponent::class])
 internal abstract class AppModule {
 
     @Binds
@@ -29,6 +30,8 @@ abstract class AppComponent {
     }
 
     abstract fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
+
+    abstract fun getViewModelComponentFactory(): ViewModelComponent.Factory
 
     abstract fun getRepository(): IAMyMoneyRepository
 }
