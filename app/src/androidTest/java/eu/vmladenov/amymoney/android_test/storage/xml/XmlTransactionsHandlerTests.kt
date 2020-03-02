@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.models.ReconciledState
 import eu.vmladenov.amymoney.storage.xml.XmlTransactionsHandler
 import org.junit.Assert
@@ -7,7 +8,7 @@ import org.junit.Before
 import org.junit.Test
 import java.util.*
 
-class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
+class XmlTransactionsHandlerTests : BaseXmlHandlerTest() {
     private lateinit var service: XmlTransactionsHandler
 
     @Before
@@ -17,7 +18,8 @@ class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
 
     @Test
     fun shouldBeAbleToParseTransaction() {
-        val parser = createParser("""
+        val parser = createParser(
+            """
             <TRANSACTIONS>
               <TRANSACTION memo="Some spendings" entrydate="2020-02-24" postdate="2020-02-25" id="T000000000000000008" commodity="EUR">
                <SPLITS>
@@ -32,8 +34,12 @@ class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
                </SPLITS>
               </TRANSACTION>
              </TRANSACTIONS>
-        """)
-        val transactions = service.read(parser)
+        """
+        )
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val transactions = repo.transactions
         Assert.assertEquals(1, transactions.size)
         val transaction = transactions[0]
         Assert.assertEquals("T000000000000000008", transaction.id)
@@ -69,7 +75,8 @@ class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
 
     @Test
     fun shouldHandleMultipleTransactions() {
-        val parser = createParser("""
+        val parser = createParser(
+            """
 <TRANSACTIONS>
   <TRANSACTION memo="" entrydate="2020-02-22" postdate="2020-02-22" id="T000000000000000006" commodity="EUR">
    <SPLITS>
@@ -84,8 +91,12 @@ class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
    </SPLITS>
   </TRANSACTION>
 </TRANSACTIONS>
-        """)
-        val transactions = service.read(parser)
+        """
+        )
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val transactions = repo.transactions
         Assert.assertEquals(2, transactions.size)
         Assert.assertEquals("T000000000000000006", transactions[0].id)
         Assert.assertEquals(2, transactions[0].splits.size)
@@ -95,10 +106,15 @@ class XmlTransactionsHandlerTests: BaseXmlHandlerTest() {
 
     @Test
     fun shouldHandleEmpty() {
-        val parser = createParser("""
+        val parser = createParser(
+            """
 <TRANSACTIONS count="0" />
-        """)
-        val transactions = service.read(parser)
+        """
+        )
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val transactions = repo.transactions
         Assert.assertEquals(0, transactions.size)
     }
 }

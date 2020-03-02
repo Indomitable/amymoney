@@ -4,22 +4,11 @@ import eu.vmladenov.amymoney.storage.xml.XmlTags
 import java.util.*
 
 @XmlTag(XmlTags.FileInfo)
-data class FileInfo(
-    val creationDate: Date,
-    val lastModificationDate: Date,
-    val version: Int,
-    val fixVersion: Int
+class FileInfo(
+    val creationDate: Date = GregorianCalendar().time,
+    val lastModificationDate: Date = GregorianCalendar().time,
+    val version: Int = -1,
+    val fixVersion: Int = -1
 ) {
     fun isEmpty() = version == -1
-
-    companion object {
-        fun empty(): FileInfo {
-            return FileInfo(
-                GregorianCalendar().time,
-                GregorianCalendar().time,
-                -1,
-                -1
-            )
-        }
-    }
 }

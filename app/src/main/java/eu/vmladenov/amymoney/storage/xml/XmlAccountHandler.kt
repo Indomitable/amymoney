@@ -1,25 +1,16 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountType
-import eu.vmladenov.amymoney.models.Accounts
-import eu.vmladenov.amymoney.models.KMyMoneyFile
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface IXmlAccountHandler {
-    fun read(parser: XmlPullParser): Accounts
-}
-
 @Singleton
-class XmlAccountHandler @Inject constructor(): XmlBaseCollectionHandler<Account>(XmlTags.Accounts, XmlTags.Account), IXmlAccountHandler {
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.accounts = read(parser)
-    }
-
-    override fun read(parser: XmlPullParser): Accounts {
-        return Accounts(readChildren(parser))
+class XmlAccountHandler @Inject constructor(): XmlBaseCollectionHandler<Account>(XmlTags.Accounts, XmlTags.Account) {
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        repository.accounts.fill(readChildren(parser))
     }
 
     override fun readChild(parser: XmlPullParser): Account {
@@ -55,7 +46,6 @@ class XmlAccountHandler @Inject constructor(): XmlBaseCollectionHandler<Account>
                     throw XmlParseException(tagName, "Unknown tag name ${tagName.tagName} found in institution. Line ${xmlParser.lineNumber}")
             }
         }
-
         return account
     }
 

@@ -1,12 +1,13 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.XmlPricesHandler
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.util.*
 
-class XmlPricesHandlerTests: BaseXmlHandlerTest() {
+class XmlPricesHandlerTests : BaseXmlHandlerTest() {
     private lateinit var service: XmlPricesHandler
     private val defaultPriceDate: Date = GregorianCalendar(1998, 11, 31).time
 
@@ -17,7 +18,8 @@ class XmlPricesHandlerTests: BaseXmlHandlerTest() {
 
     @Test
     fun shouldBeAbleToParsePrices() {
-        val parser = createParser("""<PRICES count="3">
+        val parser = createParser(
+            """<PRICES count="3">
     <PRICEPAIR from="ATS" to="EUR">
         <PRICE date="1998-12-31" price="10000/137603" source="KMyMoney" />
         <PRICE date="" price="10000/137603" source="KMyMoney" />
@@ -29,8 +31,11 @@ class XmlPricesHandlerTests: BaseXmlHandlerTest() {
         <PRICE date="1998-12-31" price="10000/403399" source="KMyMoney" />
     </PRICEPAIR>
 </PRICES>
-        """)
-        val prices = service.read(parser)
+        """
+        )
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+        val prices = repo.prices
         Assert.assertEquals(3, prices.size)
         val pricePair0 = prices[0]
         Assert.assertEquals("ATS", pricePair0.from)
@@ -48,15 +53,19 @@ class XmlPricesHandlerTests: BaseXmlHandlerTest() {
 
     @Test
     fun shouldSetDateToDefaultOneWhenMissingOrWrong() {
-        val parser = createParser("""<PRICES count="3">
+        val parser = createParser(
+            """<PRICES count="3">
     <PRICEPAIR from="ATS" to="EUR">
         <PRICE date="" price="10000/137603" source="KMyMoney" />
         <PRICE date="wrong-date" price="10000/137603" source="KMyMoney" />
     </PRICEPAIR>
 </PRICES>
-    """)
-        val prices = service.read(parser)
-        Assert.assertEquals(defaultPriceDate, prices.pricePairs[0].prices[0].date)
-        Assert.assertEquals(defaultPriceDate, prices.pricePairs[0].prices[1].date)
+    """
+        )
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+        val prices = repo.prices
+        Assert.assertEquals(defaultPriceDate, prices[0].prices[0].date)
+        Assert.assertEquals(defaultPriceDate, prices[0].prices[1].date)
     }
 }

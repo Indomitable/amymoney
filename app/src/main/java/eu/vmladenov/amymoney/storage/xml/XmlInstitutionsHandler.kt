@@ -1,25 +1,20 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Address
 import eu.vmladenov.amymoney.models.Institution
 import eu.vmladenov.amymoney.models.Institutions
-import eu.vmladenov.amymoney.models.KMyMoneyFile
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface IXmlInstitutionsHandler {
-    fun read(parser: XmlPullParser): Institutions
-}
 
 @Singleton
-class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<Institution>(XmlTags.Institutions, XmlTags.Institution), IXmlInstitutionsHandler {
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.institutions = read(parser)
-    }
-
-    override fun read(parser: XmlPullParser): Institutions {
-        return Institutions(readChildren(parser))
+class XmlInstitutionsHandler @Inject constructor() : XmlBaseCollectionHandler<Institution>(XmlTags.Institutions, XmlTags.Institution) {
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        val institutions = Institutions()
+        institutions.fill(readChildren(parser))
+        repository.institutions.onNext(institutions)
     }
 
     override fun readChild(parser: XmlPullParser): Institution {

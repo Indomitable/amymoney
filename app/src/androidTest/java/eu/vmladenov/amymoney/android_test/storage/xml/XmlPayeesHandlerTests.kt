@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.models.IbanBicPayeeIdentifier
 import eu.vmladenov.amymoney.models.NationalAccountPayeeIdentifier
 import eu.vmladenov.amymoney.storage.xml.XmlParseException
@@ -8,7 +9,7 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
+class XmlPayeesHandlerTests : BaseXmlHandlerTest() {
     private lateinit var service: XmlPayeesHandler
 
     @Before
@@ -30,7 +31,11 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
  </PAYEES>
             """
         )
-        val payees = service.read(parser)
+
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val payees = repo.payees
         Assert.assertEquals(1, payees.size)
         val payee = payees[0]
         Assert.assertEquals("P000004", payee.id)
@@ -66,7 +71,7 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
     }
 
     @Test
-    fun shouldBeAbleToReadWithNoIdentifiers(){
+    fun shouldBeAbleToReadWithNoIdentifiers() {
         val parser = createParser(
             """
  <PAYEES>                
@@ -76,13 +81,16 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
  </PAYEES>
             """
         )
-        val payees = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val payees = repo.payees
         Assert.assertEquals(1, payees.size)
         Assert.assertEquals(0, payees[0].identifiers.size)
     }
 
     @Test
-    fun shouldBeAbleToReadMultiplePayees(){
+    fun shouldBeAbleToReadMultiplePayees() {
         val parser = createParser(
             """
  <PAYEES>                
@@ -95,18 +103,24 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
  </PAYEES>
             """
         )
-        val payees = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val payees = repo.payees
         Assert.assertEquals(2, payees.size)
     }
 
     @Test
-    fun shouldBeAbleToReadEmptyInstitutions(){
+    fun shouldBeAbleToReadEmptyInstitutions() {
         val parser = createParser(
             """
     <PAYEES count="0"/>
             """
         )
-        val payees = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val payees = repo.payees
         Assert.assertEquals(0, payees.size)
     }
 
@@ -122,6 +136,6 @@ class XmlPayeesHandlerTests: BaseXmlHandlerTest() {
  </PAYEES>
             """
         )
-        service.read(parser)
+        service.update(parser, AMyMoneyRepository())
     }
 }

@@ -1,6 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.models.KMyMoneyFile
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.XmlAttribute
 import eu.vmladenov.amymoney.models.XmlTag
 import org.xmlpull.v1.XmlPullParser
@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 interface IXmlFileTagHandler {
-    fun update(parser: XmlPullParser, file: KMyMoneyFile)
+    fun update(parser: XmlPullParser, repository: IAMyMoneyRepository)
 }
 
 abstract class XmlBaseHandler : IXmlFileTagHandler {

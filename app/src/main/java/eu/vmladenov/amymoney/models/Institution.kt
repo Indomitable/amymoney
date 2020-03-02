@@ -15,4 +15,4 @@ data class Institution(
 
 @XmlTag(XmlTags.Institutions)
 @XmlCollection(Institution::class)
-data class Institutions(val institutions: List<Institution>): ArrayList<Institution>(institutions)
+class Institutions: BaseList<Institution>()

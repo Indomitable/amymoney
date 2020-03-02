@@ -61,4 +61,4 @@ data class Transaction(
 
 @XmlTag(XmlTags.Transactions)
 @XmlCollection(Transaction::class)
-data class Transactions(val transactions: List<Transaction>) : ArrayList<Transaction>(transactions)
+class Transactions: BaseList<Transaction>()

@@ -1,6 +1,6 @@
 package eu.vmladenov.amymoney.models
 
-data class CostCenters(val costCenters: List<CostCenter>): ArrayList<CostCenter>(costCenters)
+class CostCenters : BaseList<CostCenter>()
 
 data class CostCenter(
     @XmlAttribute("id") val id: String,

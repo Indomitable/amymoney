@@ -1,11 +1,12 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.XmlTagsHandler
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-class XmlTagsHandlerTests: BaseXmlHandlerTest() {
+class XmlTagsHandlerTests : BaseXmlHandlerTest() {
     private lateinit var service: XmlTagsHandler
 
     @Before
@@ -22,7 +23,10 @@ class XmlTagsHandlerTests: BaseXmlHandlerTest() {
  </TAGS>
             """
         )
-        val tags = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val tags = repo.tags
         Assert.assertEquals(1, tags.size)
         val tag = tags[0]
         Assert.assertEquals("G000001", tag.id)
@@ -41,7 +45,10 @@ class XmlTagsHandlerTests: BaseXmlHandlerTest() {
  </TAGS>
             """
         )
-        val tags = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val tags = repo.tags
         Assert.assertEquals(2, tags.size)
         val tag0 = tags[0]
         Assert.assertEquals("G000001", tag0.id)
@@ -58,14 +65,16 @@ class XmlTagsHandlerTests: BaseXmlHandlerTest() {
     }
 
     @Test
-    fun shouldBeAbleToDeserializeWhenNone()
-    {
+    fun shouldBeAbleToDeserializeWhenNone() {
         val parser = createParser(
             """
  <TAGS count="0" />
             """
         )
-        val tags = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val tags = repo.tags
         Assert.assertEquals(0, tags.size)
     }
 }

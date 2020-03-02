@@ -1,23 +1,16 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import java.lang.NumberFormatException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface IXmlSecuritiesHandler {
-    fun read(parser: XmlPullParser): Securities
-}
-
 /**
  * Handling Securities and Currencies
  */
-abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): XmlBaseCollectionHandler<Security>(parentTag, childTag), IXmlSecuritiesHandler {
-    override fun read(parser: XmlPullParser): Securities {
-        return Securities(readChildren(parser))
-    }
-
+abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): XmlBaseCollectionHandler<Security>(parentTag, childTag) {
     override fun readChild(parser: XmlPullParser): Security {
         parser.require(XmlPullParser.START_TAG, null, childTag.tagName)
         checkUnsupportedAttributes(parser, Security::class)
@@ -118,14 +111,14 @@ abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): 
 
 @Singleton
 class XmlCurrenciesHandler @Inject constructor(): XmlBaseSecuritiesHandler(XmlTags.Currencies, XmlTags.Currency) {
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.currencies = read(parser)
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        repository.currencies.fill(readChildren(parser))
     }
 }
 
 @Singleton
 class XmlSecuritiesHandler @Inject constructor(): XmlBaseSecuritiesHandler(XmlTags.Securities, XmlTags.Security) {
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.securities = read(parser)
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        repository.securities.fill(readChildren(parser))
     }
 }

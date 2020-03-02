@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.XmlInstitutionsHandler
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -33,7 +34,10 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
   </INSTITUTIONS>
             """
         )
-        val institutions = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val institutions = repo.institutions.value
         assertEquals(1, institutions.size)
         val institution = institutions[0]
         assertEquals("I000002", institution.id)
@@ -70,7 +74,10 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
   </INSTITUTIONS>
             """
         )
-        val institutions = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val institutions = repo.institutions.value
         assertEquals(1, institutions.size)
         assertEquals(0, institutions[0].extra.size)
     }
@@ -87,7 +94,10 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
   </INSTITUTIONS>
             """
         )
-        val institutions = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val institutions = repo.institutions.value
         assertEquals(1, institutions.size)
         assertEquals(0, institutions[0].accountIds.size)
         assertEquals(0, institutions[0].extra.size)
@@ -109,7 +119,10 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
   </INSTITUTIONS>
             """
         )
-        val institutions = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val institutions = repo.institutions.value
         assertEquals(2, institutions.size)
 
         val institution = institutions[1]
@@ -131,7 +144,10 @@ class XmlInstitutionHandlerTests: BaseXmlHandlerTest() {
     <INSTITUTIONS count="0"/>
             """
         )
-        val institutions = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val institutions = repo.institutions.value
         assertEquals(0, institutions.size)
     }
 }

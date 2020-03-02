@@ -1,19 +1,34 @@
 package eu.vmladenov.amymoney.dagger
 
+import dagger.Binds
 import dagger.Component
 import dagger.Module
-import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.dagger.XmlHandlerComponent
-import javax.inject.Singleton
+import javax.inject.Scope
 
-//@Module(subcomponents = [XmlHandlerComponent::class])
-//internal class AppModule
+@Scope
+@MustBeDocumented
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+annotation class AppScope
 
-@Component // (modules = [AppModule::class])
+@Module(subcomponents = [XmlHandlerComponent::class])
+internal abstract class AppModule {
+
+    @Binds
+    @AppScope
+    abstract fun bindRepository(repository: AMyMoneyRepository): IAMyMoneyRepository
+}
+
+@AppScope
+@Component(modules = [AppModule::class])
 abstract class AppComponent {
     val xmlHandlerComponent: Lazy<XmlHandlerComponent> = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
         getXmlHandlerComponentFactory().create()
     }
 
     abstract fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
+
+    abstract fun getRepository(): IAMyMoneyRepository
 }

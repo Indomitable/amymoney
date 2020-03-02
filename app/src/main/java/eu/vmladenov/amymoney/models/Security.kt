@@ -107,4 +107,4 @@ data class Security(
     val extra: Map<String, String>
 )
 
-data class Securities(val items: List<Security>): ArrayList<Security>(items)
+class Securities: BaseList<Security>()

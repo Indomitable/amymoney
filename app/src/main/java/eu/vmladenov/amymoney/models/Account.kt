@@ -62,4 +62,6 @@ data class Account(
 
 @XmlTag(XmlTags.Accounts)
 @XmlCollection(Account::class)
-data class Accounts(val accounts: List<Account>) : ArrayList<Account>(accounts)
+class Accounts() : BaseList<Account>() {
+
+}

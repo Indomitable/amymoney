@@ -1,23 +1,16 @@
 package eu.vmladenov.amymoney.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 import javax.inject.Singleton
 
-interface IXmlPayeesHandler {
-    fun read(parser: XmlPullParser): Payees
-}
-
 @Singleton
-class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(XmlTags.Payees, XmlTags.Payee), IXmlPayeesHandler {
+class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(XmlTags.Payees, XmlTags.Payee) {
 
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.payees = read(parser)
-    }
-
-    override fun read(parser: XmlPullParser): Payees {
-        return Payees(readChildren(parser))
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        repository.payees.fill(readChildren(parser))
     }
 
     override fun readChild(parser: XmlPullParser): Payee {

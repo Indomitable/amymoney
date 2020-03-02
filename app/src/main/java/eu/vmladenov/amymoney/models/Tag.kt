@@ -13,4 +13,4 @@ data class Tag(
 
 @XmlTag(XmlTags.Tags)
 @XmlCollection(Tag::class)
-data class Tags(val tags: List<Tag>): ArrayList<Tag>(tags)
+class Tags: BaseList<Tag>()

@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.android_test.storage.xml
 
+import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.models.AccountType
 import eu.vmladenov.amymoney.storage.xml.XmlAccountHandler
 import org.junit.Assert
@@ -29,8 +30,10 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
 </ACCOUNTS>"""
         )
         val service = XmlAccountHandler()
-        val accounts = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
 
+        val accounts = repo.accounts
         Assert.assertEquals(1, accounts.size)
         val account = accounts[0]
         Assert.assertEquals("A000001", account.id)
@@ -67,7 +70,10 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
 </ACCOUNTS>"""
         )
         val service = XmlAccountHandler()
-        val accounts = service.read(parser)
+        val repo = AMyMoneyRepository()
+        service.update(parser, repo)
+
+        val accounts = repo.accounts
         Assert.assertEquals(2, accounts.size)
         val account0 = accounts[0]
         Assert.assertEquals("A000023", account0.id)

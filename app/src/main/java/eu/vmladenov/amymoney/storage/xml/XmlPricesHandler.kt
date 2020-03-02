@@ -1,10 +1,9 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.infrastructure.Fraction
-import eu.vmladenov.amymoney.models.KMyMoneyFile
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Price
 import eu.vmladenov.amymoney.models.PricePair
-import eu.vmladenov.amymoney.models.Prices
 import org.xmlpull.v1.XmlPullParser
 import java.util.*
 import javax.inject.Inject
@@ -14,12 +13,8 @@ import javax.inject.Singleton
 class XmlPricesHandler @Inject constructor(): XmlBaseCollectionHandler<PricePair>(XmlTags.Prices, XmlTags.PricePair) {
     private val defaultPriceDate: Date = GregorianCalendar(1998, 11, 31).time
 
-    override fun update(parser: XmlPullParser, file: KMyMoneyFile) {
-        file.prices = read(parser)
-    }
-
-    fun read(parser: XmlPullParser): Prices {
-        return Prices(readChildren(parser))
+    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+        repository.prices.fill(readChildren(parser))
     }
 
     override fun readChild(parser: XmlPullParser): PricePair {

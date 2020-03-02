@@ -16,4 +16,4 @@ data class PricePair (
     val prices: List<Price>
 )
 
-data class Prices (val pricePairs: List<PricePair>): ArrayList<PricePair>(pricePairs)
+class Prices: BaseList<PricePair>()
