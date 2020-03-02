@@ -1,26 +1,23 @@
 package eu.vmladenov.amymoney.ui.views.institutions
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.LiveDataReactiveStreams
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import eu.vmladenov.amymoney.AMyMoneyApplication
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Institutions
-import eu.vmladenov.amymoney.ui.dagger.DaggerViewModelComponent
-import eu.vmladenov.amymoney.ui.dagger.ViewModelComponent
-import eu.vmladenov.amymoney.ui.views.BaseViewModelFactory
 import io.reactivex.rxjava3.core.BackpressureStrategy
-import java.lang.IllegalArgumentException
 
-class InstitutionsViewModelFactory : BaseViewModelFactory() {
+class InstitutionsViewModelFactory(private val institutionsFragment: InstitutionsFragment) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(InstitutionsViewModel::class.java)) {
-            return injector.getInstitutionsViewModel() as T
-        }
-        throw IllegalArgumentException("Wrong ViewModel")
+        val injector = (institutionsFragment.requireActivity().application as AMyMoneyApplication).injector
+        return InstitutionsViewModel(injector.getRepository()) as T
     }
 }
 
-class InstitutionsViewModel(private val repository: IAMyMoneyRepository) : AndroidViewModel() {
+class InstitutionsViewModel(private val repository: IAMyMoneyRepository) : ViewModel() {
     val institutions: LiveData<Institutions>
         get() {
             return LiveDataReactiveStreams.fromPublisher(repository.institutions.toFlowable(BackpressureStrategy.LATEST))

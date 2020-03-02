@@ -21,7 +21,7 @@ class InstitutionsFragment : Fragment() {
         fun newInstance() = InstitutionsFragment()
     }
 
-    private val viewModel: InstitutionsViewModel by viewModels(factoryProducer = { InstitutionsViewModelFactory() } )
+    private val viewModel: InstitutionsViewModel by viewModels(factoryProducer = { InstitutionsViewModelFactory(this) } )
     private lateinit var adapter: InstitutionsAdapter
 
     override fun onCreateView(
@@ -48,6 +48,7 @@ class InstitutionsFragment : Fragment() {
     }
 
 }
+
 
 class InstitutionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(institution: Institution) {
