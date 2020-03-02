@@ -9,7 +9,9 @@
             android:id="@+id/nav_institutions"
             android:title="@string/institutions"
             />
-        <item android:title="@string/accounts" />
+        <item
+            android:id="@+id/nav_accounts"
+            android:title="@string/accounts" />
         <item android:title="@string/categories" />
         <item android:title="@string/tags" />
         <item android:title="@string/payees" />

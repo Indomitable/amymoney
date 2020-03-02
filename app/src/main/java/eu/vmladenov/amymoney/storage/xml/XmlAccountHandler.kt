@@ -3,6 +3,7 @@ package eu.vmladenov.amymoney.storage.xml
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountType
+import eu.vmladenov.amymoney.models.Accounts
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -10,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class XmlAccountHandler @Inject constructor(): XmlBaseCollectionHandler<Account>(XmlTags.Accounts, XmlTags.Account) {
     override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.accounts.fill(readChildren(parser))
+        repository.accounts.onNext(Accounts(readChildren(parser)))
     }
 
     override fun readChild(parser: XmlPullParser): Account {

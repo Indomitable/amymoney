@@ -24,9 +24,6 @@ internal abstract class AppModule {
 @AppScope
 @Component(modules = [AppModule::class])
 abstract class AppComponent {
-    val xmlHandlerComponent: Lazy<XmlHandlerComponent> = lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        getXmlHandlerComponentFactory().create()
-    }
 
     abstract fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
 

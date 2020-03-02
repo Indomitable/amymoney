@@ -33,7 +33,7 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
         val repo = AMyMoneyRepository()
         service.update(parser, repo)
 
-        val accounts = repo.accounts
+        val accounts = repo.accounts.value
         Assert.assertEquals(1, accounts.size)
         val account = accounts[0]
         Assert.assertEquals("A000001", account.id)
@@ -73,7 +73,7 @@ class XmlAccountHandlerTests : BaseXmlHandlerTest() {
         val repo = AMyMoneyRepository()
         service.update(parser, repo)
 
-        val accounts = repo.accounts
+        val accounts = repo.accounts.value
         Assert.assertEquals(2, accounts.size)
         val account0 = accounts[0]
         Assert.assertEquals("A000023", account0.id)

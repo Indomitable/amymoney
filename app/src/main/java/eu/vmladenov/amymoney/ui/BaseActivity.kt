@@ -7,7 +7,4 @@ import eu.vmladenov.amymoney.dagger.AppComponent
 abstract class BaseActivity protected constructor(): AppCompatActivity() {
     protected val application: AMyMoneyApplication
         get() = (applicationContext as AMyMoneyApplication)
-
-    protected val injector: AppComponent
-        get() = application.injector
 }

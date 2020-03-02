@@ -42,7 +42,7 @@ enum class AccountType(val type: Int) {
 
 @XmlTag(XmlTags.Account)
 data class Account(
-    @XmlAttribute("id") val id: String,
+    @XmlAttribute("id") override val id: String,
     @XmlAttribute("name") val name: String,
     @XmlAttribute("currency") val currencyId: String,
     @XmlAttribute("type") val type: AccountType,
@@ -58,10 +58,11 @@ data class Account(
     // @XmlAttribute("bic") val bic: String
     val subAccounts: List<String>,
     val extra: Map<String, String>
-)
+): IModel
 
 @XmlTag(XmlTags.Accounts)
 @XmlCollection(Account::class)
-class Accounts() : BaseList<Account>() {
+class Accounts(items: List<Account> = emptyList()) : BaseList<Account>(items)
 
-}
+
+object AccountComparable: Comparable<Account>()

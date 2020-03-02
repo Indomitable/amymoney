@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="eu.vmladenov.amymoney.ui.views.home.Home"
-        android:label="Home"
+        android:label="@string/home"
         tools:layout="@layout/home_fragment"
         >
         <action
@@ -19,7 +19,17 @@
     <fragment
         android:id="@+id/nav_institutions"
         android:name="eu.vmladenov.amymoney.ui.views.institutions.InstitutionsFragment"
-        android:label="Institutions"
+        android:label="@string/institutions"
         tools:layout="@layout/institutions_fragment"
+        >
+        <action
+            android:id="@+id/action_nav_institutions_to_placeholder"
+            app:destination="@id/nav_accounts" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_accounts"
+        android:name="eu.vmladenov.amymoney.ui.views.institutions.InstitutionsFragment"
+        android:label="@string/accounts"
+        tools:layout=""
         />
 </navigation>

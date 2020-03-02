@@ -11,7 +11,7 @@ interface IAMyMoneyRepository {
     val payees: Payees
     val costCenters: CostCenters
     val tags: Tags
-    val accounts: Accounts
+    val accounts: BehaviorSubject<Accounts>
     val transactions: Transactions
     val securities: Securities
     val currencies: Securities
@@ -28,7 +28,7 @@ class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
     override val payees: Payees = Payees()
     override val costCenters: CostCenters = CostCenters()
     override val tags: Tags = Tags()
-    override val accounts: Accounts = Accounts()
+    override val accounts: BehaviorSubject<Accounts> = BehaviorSubject.createDefault(Accounts())
     override val transactions: Transactions = Transactions()
     override val securities: Securities = Securities()
     override val currencies: Securities = Securities()
@@ -36,5 +36,5 @@ class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
     override var extra: Map<String, String> = emptyMap()
     override val unsupportedTags: MutableList<UnsupportedTag> = mutableListOf()
 
-    override fun isEmpty() = accounts.size == 0
+    override fun isEmpty() = accounts.value.size == 0
 }

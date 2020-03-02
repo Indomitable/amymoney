@@ -69,6 +69,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.3.61"
     // Dagger 2 DI
     implementation 'com.google.dagger:dagger:2.26'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     kapt 'com.google.dagger:dagger-compiler:2.26'
 
     //Navigation
