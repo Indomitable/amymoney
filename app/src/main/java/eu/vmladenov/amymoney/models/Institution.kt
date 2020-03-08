@@ -9,8 +9,8 @@ data class Institution(
     @XmlAttribute("sortcode") val sortCode: String = "",
     @XmlAttribute("manager") val manager: String = "",
     val address: Address = Address(),
-    val accountIds: List<String>,
-    val extra: Map<String, String>
+    val accountIds: List<String> = emptyList(),
+    val extra: Map<String, String> = emptyMap()
 ): IModel
 
 @XmlTag(XmlTags.Institutions)

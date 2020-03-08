@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/account_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_weight="1"
+        android:paddingStart="@dimen/list_item_start_end_padding"
+        android:paddingEnd="@dimen/list_item_start_end_padding"
+        android:textColor="@color/colorListItemText" />
+
+    <TextView
+        android:id="@+id/account_item_type"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:layout_weight="1"
+        android:paddingStart="@dimen/list_item_start_end_padding"
+        android:paddingEnd="@dimen/list_item_start_end_padding" />
+</LinearLayout>

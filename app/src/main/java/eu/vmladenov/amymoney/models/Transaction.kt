@@ -49,7 +49,7 @@ class Splits : ArrayList<Split>(emptyList())
 
 @XmlTag(XmlTags.Transaction)
 data class Transaction(
-    @XmlAttribute("id") val id: String,
+    @XmlAttribute("id") override val id: String,
     @XmlAttribute("entrydate") val entryDate: Date?,
     @XmlAttribute("postdate") val postDate: Date?,
     @XmlAttribute("memo") val memo: String,
@@ -57,7 +57,7 @@ data class Transaction(
     @XmlAttribute("bankid") val bankId: String,
     val splits: Splits,
     val extra: Map<String, String>
-)
+): IModel
 
 @XmlTag(XmlTags.Transactions)
 @XmlCollection(Transaction::class)

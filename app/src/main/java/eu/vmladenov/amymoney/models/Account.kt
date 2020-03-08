@@ -1,6 +1,7 @@
 package eu.vmladenov.amymoney.models
 
 import eu.vmladenov.amymoney.storage.xml.XmlTags
+import java.lang.Exception
 import java.util.*
 
 enum class AccountStandardType(val id: String) {
@@ -8,7 +9,7 @@ enum class AccountStandardType(val id: String) {
     Asset("AStd::Asset"),
     Expense("AStd::Expense"),
     Income("AStd::Income"),
-    Equity("AStd::Equity")
+    Equity("AStd::Equity");
 }
 
 enum class AccountType(val type: Int) {
@@ -62,7 +63,106 @@ data class Account(
 
 @XmlTag(XmlTags.Accounts)
 @XmlCollection(Account::class)
-class Accounts(items: List<Account> = emptyList()) : BaseList<Account>(items)
+class Accounts(items: Map<String, Account> = emptyMap()) : BaseMap<Account>(items) {
+    fun getUserAccounts(): Sequence<Account> {
+        val assetAccount = this[AccountStandardType.Asset.id]
+        val liabilityAccount = this[AccountStandardType.Liability.id]
+        return sequence {
+            if (assetAccount != null) {
+                yieldAll(getChildren(assetAccount))
+            }
+            if (liabilityAccount != null) {
+                yieldAll(getChildren(liabilityAccount))
+            }
+        }
+    }
+
+
+    private fun getChildren(account: Account): Sequence<Account> {
+        return sequence<Account> {
+            for (id in account.subAccounts) {
+                val child = this@Accounts[id]
+                if (child != null) {
+                    yield(child)
+                    yieldAll(getChildren(child))
+                }
+            }
+        }
+    }
+
+
+//    fun getTopUserAccounts(): Sequence<Account> {
+//        return sequence {
+//            for (topAccount in tree) {
+//                if (isUserAccount(topAccount.value)) {
+//                    yield(topAccount.value)
+//                }
+//            }
+//        }
+//    }
+//
+//    fun getUserAccounts(): Sequence<Account> {
+//        return sequence {
+//            for (topAccount in getTopUserAccounts()) {
+//                y
+//            }
+//        }
+//    }
+//
+//
+//    private fun buildTree(accounts: Map<String, Account>): Map<String, Account> {
+//        val topItems = mutableMapOf<String, Account>()
+//        for (account in accounts.values) {
+//            if (account.isAccountStandardType()) {
+//                account.parent = null
+//                account.children.putAll(getChildren(account, accounts))
+//                topItems[account.id] = account
+//            }
+//        }
+//        return topItems
+//    }
+//
+//    private fun getChildren(account: Account, accounts: Map<String, Account>): Sequence<Pair<String, Account>> {
+//        return sequence {
+//            for (childId in account.subAccounts) {
+//                val child: Account = accounts[childId] ?: throw Exception("Sub account not found")
+//                child.parent = account
+//                child.children.putAll(getChildren(child, accounts))
+//                yield(child.id to child)
+//            }
+//        }
+//    }
+
+//    fun isUserAccount(account: Account): Boolean {
+//        val topAccount = getTopAccount(account)
+//        return (topAccount.id == AccountStandardType.Asset.id ||
+//            topAccount.id == AccountStandardType.Liability.id)
+//    }
+//
+//    fun isTransactionAccount(account: Account): Boolean {
+//        val topAccount = getTopAccount(account)
+//        return (topAccount.id == AccountStandardType.Income.id ||
+//                topAccount.id == AccountStandardType.Expense.id)
+//    }
+//
+//    private fun getParentAccount(account: Account): Account? {
+//        val parentAccountId: String? = account.parentAccountId
+//        if (parentAccountId.isNullOrEmpty()) {
+//            return null
+//        }
+//        return this[parentAccountId]
+//    }
+//
+//    fun getTopAccount(account: Account): Account {
+//        val parentAccount = getParentAccount(account)
+//        return if (parentAccount != null) {
+//            getTopAccount(parentAccount)
+//        } else {
+//            account
+//        }
+//    }
+
+}
 
 
 object AccountComparable: Comparable<Account>()

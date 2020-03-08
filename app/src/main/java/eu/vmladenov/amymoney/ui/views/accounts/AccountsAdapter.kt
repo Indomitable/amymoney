@@ -4,24 +4,28 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
+import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountComparable
+import kotlinx.android.synthetic.main.accounts_list_item.view.*
 
 
-class AccountsAdapter(
-    private val clickHandler: AccountClickHandler
-) : ListAdapter<Account, AccountsAdapter.ViewHolder>(AccountComparable) {
+class AccountsAdapter : ListAdapter<Account, AccountsAdapter.ViewHolder>(AccountComparable) {
+
+    var clickHandler: AccountClickHandler? = null
+
 
     private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
         val item = v.tag as Account
-        clickHandler.handle(item)
+        clickHandler?.handle(item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false) as TextView
+            .inflate(R.layout.accounts_list_item, parent, false) as LinearLayout
         return ViewHolder(itemView)
     }
 
@@ -30,17 +34,17 @@ class AccountsAdapter(
         holder.bind(item)
     }
 
-    inner class ViewHolder(private val textView: TextView) : RecyclerView.ViewHolder(textView) {
+    inner class ViewHolder(private val itemLayout: LinearLayout) : RecyclerView.ViewHolder(itemLayout) {
+        private val nameView: TextView = itemLayout.account_item_name
+        private val typeView: TextView = itemLayout.account_item_type
+
         fun bind(account: Account) {
-            with(textView) {
+            with(itemLayout) {
                 tag = account
-                text = account.name
                 setOnClickListener(onClickListener)
             }
-        }
-
-        override fun toString(): String {
-            return super.toString() + " '" + textView.text + "'"
+            nameView.text = account.name
+            typeView.text = account.type.name
         }
     }
 }

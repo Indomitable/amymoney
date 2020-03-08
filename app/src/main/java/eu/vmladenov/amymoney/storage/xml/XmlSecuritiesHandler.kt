@@ -10,7 +10,7 @@ import javax.inject.Singleton
 /**
  * Handling Securities and Currencies
  */
-abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): XmlBaseCollectionHandler<Security>(parentTag, childTag) {
+abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): XmlBaseModelCollectionHandler<Security>(parentTag, childTag) {
     override fun readChild(parser: XmlPullParser): Security {
         parser.require(XmlPullParser.START_TAG, null, childTag.tagName)
         checkUnsupportedAttributes(parser, Security::class)

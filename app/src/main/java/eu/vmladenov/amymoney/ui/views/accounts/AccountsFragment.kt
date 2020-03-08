@@ -1,22 +1,26 @@
 package eu.vmladenov.amymoney.ui.views.accounts
 
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
-import eu.vmladenov.amymoney.models.Institution
 import eu.vmladenov.amymoney.ui.views.DisposableFragment
+import io.reactivex.rxjava3.functions.Consumer
 
 class AccountsFragment : DisposableFragment() {
     private val viewModel: AccountsViewModel by viewModels(factoryProducer = { AccountsViewModelFactory() })
+    private lateinit var institutionsAdapter: InstitutionsSpinnerAdapter
+    private lateinit var accountsAdapter: AccountsAdapter
+    private lateinit var institutionsView: Spinner
+    private lateinit var accountsView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,29 +34,56 @@ class AccountsFragment : DisposableFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.accounts_fragment, container, false)
-        val institutionsView = view.findViewById<Spinner>(R.id.accountInstitutionsSpinner)
 
-        with (institutionsView) {
-            adapter = ArrayAdapter<Institution>(context, android.R.layout.simple_spinner_dropdown_item)
-        }
+        initViews(view)
+        bindToViewModel()
+        setEvents()
 
-        val accountsView = view.findViewById<RecyclerView>(R.id.accountsList)
-
-        with(accountsView) {
-            layoutManager = LinearLayoutManager(context)
-            adapter = AccountsAdapter(object : AccountClickHandler {
-                override fun handle(account: Account) {
-
-                }
-            })
-        }
-
-        viewModel.accounts.takeUntil(destroyNotifier).observe(viewLifecycleOwner, Observer {
-            (accountsView.adapter as AccountsAdapter).submitList(it)
-        })
         return view
     }
 
+    private fun initViews(view: View) {
+        institutionsView = view.findViewById(R.id.accountInstitutionsSpinner)
+
+        institutionsAdapter = InstitutionsSpinnerAdapter()
+            //ArrayAdapter<Institution>(institutionsView.context, android.R.layout.simple_spinner_dropdown_item)
+
+        institutionsView.adapter = institutionsAdapter
+
+        accountsView = view.findViewById(R.id.accountsList)
+        accountsAdapter = AccountsAdapter()
+        accountsView.layoutManager = LinearLayoutManager(context)
+        accountsView.adapter = accountsAdapter
+    }
+
+    private fun bindToViewModel() {
+        viewModel.institutions.takeUntil(destroyNotifier).subscribe(Consumer {
+            institutionsAdapter.fill(it)
+        })
+
+        viewModel.accounts.takeUntil(destroyNotifier).subscribe(Consumer {
+            accountsAdapter.submitList(it.toList())
+        })
+    }
+
+    private fun setEvents() {
+        accountsAdapter.clickHandler = object : AccountClickHandler {
+            override fun handle(account: Account) {
+
+            }
+        }
+
+        institutionsView.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                viewModel.selectedInstitution.onNext(null)
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedInstitution = institutionsAdapter.getItem(position)
+                viewModel.selectInstitution(selectedInstitution)
+            }
+        }
+    }
 
     companion object {
 

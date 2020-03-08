@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class XmlPayeesHandler @Inject constructor(): XmlBaseCollectionHandler<Payee>(XmlTags.Payees, XmlTags.Payee) {
+class XmlPayeesHandler @Inject constructor(): XmlBaseModelCollectionHandler<Payee>(XmlTags.Payees, XmlTags.Payee) {
 
     override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
         repository.payees.fill(readChildren(parser))

@@ -4,7 +4,7 @@ import eu.vmladenov.amymoney.storage.xml.XmlTags
 
 @XmlTag(XmlTags.Payee)
 data class Payee(
-    @XmlAttribute("id") val id: String = "",
+    @XmlAttribute("id") override val id: String = "",
     @XmlAttribute("name") val name: String = "",
     @XmlAttribute("email") val email: String = "",
     @XmlAttribute("notes") val notes: String = "",
@@ -16,7 +16,7 @@ data class Payee(
     @XmlAttribute("matchkey") val matchKey: String = "",
     val address: Address = Address(),
     val identifiers: List<IPayeeIdentifier> = emptyList()
-)
+): IModel
 
 @XmlTag(XmlTags.Payees)
 @XmlCollection(Payee::class)

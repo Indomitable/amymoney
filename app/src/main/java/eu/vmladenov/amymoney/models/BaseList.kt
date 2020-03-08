@@ -6,3 +6,6 @@ open class BaseList<T>(items: List<T> = emptyList()): ArrayList<T>(items) {
         addAll(items)
     }
 }
+
+
+open class BaseMap<T: IModel>(items: Map<String, T>): HashMap<String, T>(items)

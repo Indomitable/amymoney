@@ -93,7 +93,7 @@ enum class RoundingMethod(val method: Int) {
 }
 
 data class Security(
-    @XmlAttribute("id") val id: String,
+    @XmlAttribute("id") override val id: String,
     @XmlAttribute("name") val name: String,
     @XmlAttribute("symbol") val tradingSymbol: String,
     @XmlAttribute("type") val securityType: SecurityType,
@@ -105,6 +105,6 @@ data class Security(
     @XmlAttribute("pp") val pricePrecision: Int,
 
     val extra: Map<String, String>
-)
+): IModel
 
 class Securities: BaseList<Security>()
