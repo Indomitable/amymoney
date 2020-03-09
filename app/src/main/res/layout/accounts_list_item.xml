@@ -18,5 +18,6 @@
         android:layout_height="@dimen/list_item_height"
         android:layout_weight="1"
         android:paddingStart="@dimen/list_item_start_end_padding"
-        android:paddingEnd="@dimen/list_item_start_end_padding" />
+        android:paddingEnd="@dimen/list_item_start_end_padding"
+        android:textAlignment="viewEnd" />
 </LinearLayout>
