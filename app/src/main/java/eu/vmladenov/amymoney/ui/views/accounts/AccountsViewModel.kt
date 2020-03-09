@@ -24,6 +24,15 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
     private val selectedInstitutionSubject: BehaviorSubject<Institution?> = BehaviorSubject.create<Institution?>()
     private val emptyInstitution: Institution = Institution(name = "Accounts with no institution assigned")
 
+    init {
+        if (repository.institutions.value.size > 0) {
+            val firstInstitution = if (initialInstitutionId.isEmpty()) emptyInstitution else repository.institutions.value.find { it -> it.id == initialInstitutionId }
+            if (firstInstitution != null) {
+                selectedInstitutionSubject.onNext(firstInstitution)
+            }
+        }
+    }
+
     val institutions: Observable<Sequence<Institution>>
         get() {
             return repository.institutions.map { institutions ->
@@ -33,7 +42,6 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
                 }
             }
         }
-
 
     val accounts: Observable<Sequence<Account>>
         get() {
@@ -62,15 +70,6 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
                 }
             }
         }
-
-    init {
-        if (repository.institutions.value.size > 0) {
-            val firstInstitution = if (initialInstitutionId.isEmpty()) emptyInstitution else repository.institutions.value.find { it -> it.id == initialInstitutionId }
-            if (firstInstitution != null) {
-                selectedInstitutionSubject.onNext(firstInstitution)
-            }
-        }
-    }
 
     var selectedInstitution: Institution?
         get() = selectedInstitutionSubject.value
