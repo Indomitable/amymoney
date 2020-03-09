@@ -29,6 +29,10 @@ class AccountsFragment : NavigationFragment() {
         arguments?.let {
             initialInstitutionId = it.getString(InstitutionIdArg, "")
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, AccountsViewModelFactory(initialInstitutionId)).get(AccountsViewModel::class.java)
     }
 
