@@ -33,6 +33,13 @@ class InstitutionsSpinnerAdapter : BaseAdapter() {
         return items.size
     }
 
+    fun getPosition(institution: Institution?): Int {
+        if (institution != null) {
+            return items.indexOfFirst { i -> i.id == institution.id }
+        }
+        return -1
+    }
+
     fun fill(institutions: Sequence<Institution>) {
         items.clear()
         items.addAll(institutions)

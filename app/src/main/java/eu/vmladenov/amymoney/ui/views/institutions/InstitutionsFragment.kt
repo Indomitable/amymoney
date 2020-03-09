@@ -4,15 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Institution
+import eu.vmladenov.amymoney.ui.views.NavigationFragment
 
-class InstitutionsFragment : Fragment() {
+class InstitutionsFragment : NavigationFragment() {
 
     companion object {
         fun newInstance() = InstitutionsFragment()
@@ -31,7 +31,9 @@ class InstitutionsFragment : Fragment() {
 
         adapter = InstitutionsAdapter(object : InstitutionClickHandler {
             override fun handle(institution: Institution) {
-
+                val navController = getNavController()
+                val action = InstitutionsFragmentDirections.actionNavInstitutionsToAccounts(institution.id)
+                navController.navigate(action)
             }
         })
 

@@ -10,20 +10,18 @@ import eu.vmladenov.amymoney.models.Institution
 import eu.vmladenov.amymoney.ui.views.DisposableViewModel
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.BiFunction
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
-import kotlinx.coroutines.yield
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 
-class AccountsViewModelFactory : ViewModelProvider.Factory {
+class AccountsViewModelFactory(private val initialInstitutionId: String) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
-        return AccountsViewModel(repository) as T
+        return AccountsViewModel(repository, initialInstitutionId) as T
     }
 }
 
-class AccountsViewModel(private val repository: IAMyMoneyRepository) : DisposableViewModel() {
-    val selectedInstitution: Subject<Institution?> = PublishSubject.create<Institution?>()
+class AccountsViewModel(private val repository: IAMyMoneyRepository, private val initialInstitutionId: String) : DisposableViewModel() {
+    private val selectedInstitutionSubject: BehaviorSubject<Institution?> = BehaviorSubject.create<Institution?>()
     private val emptyInstitution: Institution = Institution(name = "Accounts with no institution assigned")
 
     val institutions: Observable<Sequence<Institution>>
@@ -41,9 +39,10 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository) : Disposabl
         get() {
             return Observable.combineLatest(
                 repository.accounts,
-                selectedInstitution,
+                selectedInstitutionSubject,
                 BiFunction { a: Accounts, b: Institution? -> Pair(a, b) }
-            ).map { pair ->
+            )
+                .map { pair ->
                 val selectedInstitution = pair.second
                 return@map sequence<Account> {
                     if (selectedInstitution != null) {
@@ -66,14 +65,19 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository) : Disposabl
 
     init {
         if (repository.institutions.value.size > 0) {
-            val firstInstitution = repository.institutions.value.first()
-            selectedInstitution.onNext(firstInstitution)
-        } else {
-            selectedInstitution.onNext(null)
+            val firstInstitution = if (initialInstitutionId.isEmpty()) emptyInstitution else repository.institutions.value.find { it -> it.id == initialInstitutionId }
+            if (firstInstitution != null) {
+                selectedInstitutionSubject.onNext(firstInstitution)
+            }
         }
     }
 
-    fun selectInstitution(institution: Institution?) {
-        selectedInstitution.onNext(institution)
-    }
+    var selectedInstitution: Institution?
+        get() = selectedInstitutionSubject.value
+        set(value) {
+            if (value == null || (selectedInstitutionSubject.hasValue() && selectedInstitutionSubject.value!!.id == value.id)) {
+                return
+            }
+            selectedInstitutionSubject.onNext(value)
+        }
 }

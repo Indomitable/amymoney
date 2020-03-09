@@ -26,7 +26,7 @@
         tools:layout="@layout/institutions_fragment"
         >
         <action
-            android:id="@+id/action_nav_institutions_to_placeholder"
+            android:id="@+id/action_nav_institutions_to_accounts"
             app:destination="@id/nav_accounts" />
     </fragment>
     <fragment
@@ -34,5 +34,10 @@
         android:name="eu.vmladenov.amymoney.ui.views.accounts.AccountsFragment"
         android:label="@string/accounts"
         tools:layout="@layout/accounts_fragment"
-        />
+        >
+        <argument
+            android:name="INSTITUTION_ID"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
 </navigation>

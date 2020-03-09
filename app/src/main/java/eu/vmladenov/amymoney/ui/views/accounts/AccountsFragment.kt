@@ -5,28 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
-import eu.vmladenov.amymoney.ui.views.DisposableFragment
-import io.reactivex.rxjava3.functions.Consumer
+import eu.vmladenov.amymoney.ui.views.NavigationFragment
+import kotlinx.android.synthetic.main.accounts_fragment.view.*
 
-class AccountsFragment : DisposableFragment() {
-    private val viewModel: AccountsViewModel by viewModels(factoryProducer = { AccountsViewModelFactory() })
+class AccountsFragment : NavigationFragment() {
+    private lateinit var viewModel: AccountsViewModel
     private lateinit var institutionsAdapter: InstitutionsSpinnerAdapter
     private lateinit var accountsAdapter: AccountsAdapter
     private lateinit var institutionsView: Spinner
     private lateinit var accountsView: RecyclerView
 
+    private var initialInstitutionId: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
+            initialInstitutionId = it.getString(InstitutionIdArg, "")
         }
+        viewModel = ViewModelProvider(this, AccountsViewModelFactory(initialInstitutionId)).get(AccountsViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -43,27 +46,31 @@ class AccountsFragment : DisposableFragment() {
     }
 
     private fun initViews(view: View) {
-        institutionsView = view.findViewById(R.id.accountInstitutionsSpinner)
+        institutionsView = view.accountInstitutionsSpinner
 
         institutionsAdapter = InstitutionsSpinnerAdapter()
-            //ArrayAdapter<Institution>(institutionsView.context, android.R.layout.simple_spinner_dropdown_item)
 
         institutionsView.adapter = institutionsAdapter
 
-        accountsView = view.findViewById(R.id.accountsList)
+        accountsView = view.accountsList
         accountsAdapter = AccountsAdapter()
         accountsView.layoutManager = LinearLayoutManager(context)
         accountsView.adapter = accountsAdapter
     }
 
     private fun bindToViewModel() {
-        viewModel.institutions.takeUntil(destroyNotifier).subscribe(Consumer {
+        viewModel.institutions.takeUntil(destroyNotifier).subscribe {
+            val selectedItem = viewModel.selectedInstitution
             institutionsAdapter.fill(it)
-        })
+            val index = institutionsAdapter.getPosition(selectedItem)
+            if (index >= 0) {
+                institutionsView.setSelection(index)
+            }
+        }
 
-        viewModel.accounts.takeUntil(destroyNotifier).subscribe(Consumer {
+        viewModel.accounts.takeUntil(destroyNotifier).subscribe {
             accountsAdapter.submitList(it.toList())
-        })
+        }
     }
 
     private fun setEvents() {
@@ -75,22 +82,23 @@ class AccountsFragment : DisposableFragment() {
 
         institutionsView.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                viewModel.selectedInstitution.onNext(null)
+                viewModel.selectedInstitution = null
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedInstitution = institutionsAdapter.getItem(position)
-                viewModel.selectInstitution(selectedInstitution)
+                viewModel.selectedInstitution = institutionsAdapter.getItem(position)
             }
         }
     }
 
     companion object {
+        const val InstitutionIdArg = "INSTITUTION_ID"
 
         @JvmStatic
-        fun newInstance(columnCount: Int) =
+        fun newInstance(institutionId: String) =
             AccountsFragment().apply {
                 arguments = Bundle().apply {
+                    putString(InstitutionIdArg, institutionId)
                 }
             }
     }
