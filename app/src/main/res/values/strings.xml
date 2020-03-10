@@ -8,4 +8,8 @@
     <string name="tags">Tags</string>
     <string name="payees">Payees</string>
     <string name="ledgers">Ledgers</string>
+    <string name="overview">Overview</string>
+    <string name="assetAccounts">Asset Accounts</string>
+    <string name="liabilityAccounts">Liability Accounts</string>
+    <string name="currentBalance">Current Balance</string>
 </resources>

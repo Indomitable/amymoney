@@ -52,17 +52,15 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
             )
                 .map { pair ->
                 val selectedInstitution = pair.second
+                val userAccounts = pair.first.getUserAccounts()
                 return@map sequence<Account> {
                     if (selectedInstitution != null) {
                         if (selectedInstitution != emptyInstitution) {
-                            for (accountId in selectedInstitution.accountIds) {
-                                val account = pair.first[accountId]
-                                if (account != null) {
-                                    yield(account)
-                                }
+                            for (account in userAccounts.filter { a -> a.institutionId == selectedInstitution.id }) {
+                                yield(account)
                             }
                         } else {
-                            for (account in repository.accounts.value.getUserAccounts().filter { it.institutionId.isEmpty() }) {
+                            for (account in userAccounts.filter { it.institutionId.isEmpty() }) {
                                 yield(account)
                             }
                         }

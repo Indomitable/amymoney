@@ -13,4 +13,4 @@ data class Tag(
 
 @XmlTag(XmlTags.Tags)
 @XmlCollection(Tag::class)
-class Tags: BaseList<Tag>()
+class Tags(items: Map<String, Tag> = emptyMap()): BaseMap<Tag>(items)

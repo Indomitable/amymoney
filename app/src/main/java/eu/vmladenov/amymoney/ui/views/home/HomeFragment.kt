@@ -4,9 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
 import kotlinx.android.synthetic.main.home_fragment.view.*
@@ -17,28 +18,66 @@ class HomeFragment : NavigationFragment() {
         fun newInstance() = HomeFragment()
     }
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel: HomeViewModel by viewModels(factoryProducer = { HomeViewModelFactory() })
+
     private lateinit var tvNoData: TextView
-    private lateinit var overviewContainer: ConstraintLayout
+    private lateinit var overviewContainer: LinearLayout
+
+    private lateinit var assetsAdapter: AccountBalanceAdapter
+    private lateinit var liabilityAdapter: AccountBalanceAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.home_fragment, container, false)
-        tvNoData = view.tvNoData
-        overviewContainer = view.overviewContainer
-        return view
+        return inflater.inflate(R.layout.home_fragment, container, false).also {
+            initViews(it)
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, HomeViewModelFactory()).get(HomeViewModel::class.java)
-        viewModel.isDataLoaded
-            .takeUntil(destroyNotifier)
-            .subscribe {
-                tvNoData.visibility = if (it) View.GONE else View.VISIBLE
-                overviewContainer.visibility = if (it) View.VISIBLE else View.GONE
-            }
+        subscribeToViewModel(viewModel)
+    }
+
+    private fun initViews(view: View) {
+        tvNoData = view.tvNoData
+        overviewContainer = view.overviewContainer
+        assetsAdapter = AccountBalanceAdapter()
+        liabilityAdapter = AccountBalanceAdapter()
+
+        with(view.assetAccountsBalance) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = assetsAdapter
+        }
+
+        with(view.liabilityAccountsBalance) {
+            layoutManager = LinearLayoutManager(context)
+            adapter = liabilityAdapter
+        }
+    }
+
+    private fun subscribeToViewModel(viewModel: HomeViewModel) {
+        with(viewModel) {
+            isDataLoaded
+                .takeUntil(destroyNotifier)
+                .subscribe {
+                    tvNoData.visibility = if (it) View.GONE else View.VISIBLE
+                    overviewContainer.visibility = if (it) View.VISIBLE else View.GONE
+                }
+
+            assetAccountsBalance
+                .takeUntil(destroyNotifier)
+                .subscribe {
+                    assetsAdapter.submitList(it.toList())
+                }
+
+            liabilityAccountsBalance
+                .takeUntil(destroyNotifier)
+                .subscribe {
+                    liabilityAdapter.submitList(it.toList())
+                }
+        }
     }
 }

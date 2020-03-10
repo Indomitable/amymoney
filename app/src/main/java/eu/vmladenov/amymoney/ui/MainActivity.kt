@@ -44,19 +44,7 @@ class MainActivity : BaseActivity() {
         return true
     }*/
 
-    fun displayAmmount(): Fraction {
-        val amount = repository.transactions
-            .filter { t -> t.postDate!! < GregorianCalendar().time && t.splits.any { s -> s.accountId == "A000001" } }
-            .fold(Fraction(0, 1)) { acc: Fraction, transaction: Transaction ->
-                val split = transaction.splits.find { it.accountId == "A000001" }!!
-                val res = (acc + split.value) // We need to simplify because during the process the denominator is growing too much and creates overflow
-                if (res.denominator == 0L) {
-                    throw Exception("Denominator is zero")
-                }
-                return@fold res
-            }
-        return amount
-    }
+
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = getNavController()

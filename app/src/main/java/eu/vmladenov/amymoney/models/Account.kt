@@ -64,19 +64,23 @@ data class Account(
 @XmlTag(XmlTags.Accounts)
 @XmlCollection(Account::class)
 class Accounts(items: Map<String, Account> = emptyMap()) : BaseMap<Account>(items) {
-    fun getUserAccounts(): Sequence<Account> {
-        val assetAccount = this[AccountStandardType.Asset.id]
-        val liabilityAccount = this[AccountStandardType.Liability.id]
-        return sequence {
-            if (assetAccount != null) {
-                yieldAll(getChildren(assetAccount))
-            }
-            if (liabilityAccount != null) {
-                yieldAll(getChildren(liabilityAccount))
+    fun getAccounts(type: AccountStandardType): Sequence<Account> {
+        val topAccount = this[type.id]
+        if (topAccount != null) {
+            return sequence {
+                yieldAll(getChildren(topAccount))
             }
         }
+        return emptySequence()
     }
 
+
+    fun getUserAccounts(): Sequence<Account> {
+        return sequenceOf(
+            getAccounts(AccountStandardType.Asset),
+            getAccounts(AccountStandardType.Liability)
+        ).flatten()
+    }
 
     private fun getChildren(account: Account): Sequence<Account> {
         return sequence<Account> {

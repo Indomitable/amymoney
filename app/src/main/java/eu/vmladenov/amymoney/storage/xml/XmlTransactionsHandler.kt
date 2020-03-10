@@ -4,13 +4,16 @@ import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.floor
 
 @Singleton
 class XmlTransactionsHandler @Inject constructor(): XmlBaseModelCollectionHandler<Transaction>(XmlTags.Transactions, XmlTags.Transaction) {
     override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.transactions.fill(readChildren(parser))
+        val transactions = readChildrenMap(parser)
+        repository.transactions.onNext(Transactions(transactions))
     }
 
     override fun readChild(parser: XmlPullParser): Transaction {
@@ -56,7 +59,7 @@ class XmlTransactionsHandler @Inject constructor(): XmlBaseModelCollectionHandle
             id = getAttributeValue(parser, Split::id),
             shares = Fraction.parseFraction(getAttributeValue(parser, Split::shares)),
             price = Fraction.parseFraction(getAttributeValue(parser, Split::price)),
-            value = Fraction.parseFraction(getAttributeValue(parser, Split::value)),
+            value = Fraction.parseFraction(getAttributeValue(parser, Split::value)).to100Denominator(),
             accountId = getAttributeValue(parser, Split::accountId),
             constCenterId = getAttributeValue(parser, Split::constCenterId),
             reconcileFlag = ReconciledState.fromAttribute(getAttributeValue(parser, Split::reconcileFlag)),
@@ -85,4 +88,16 @@ class XmlTransactionsHandler @Inject constructor(): XmlBaseModelCollectionHandle
 
         return split
     }
+
+}
+
+private fun Fraction.to100Denominator(): Fraction {
+    if (this.denominator <= 0 || this.denominator > 100) {
+        throw Exception("Denominator bigger than 100")
+    }
+    val x = 100.toDouble() / this.denominator
+    if (x - floor(x) > 0.00001) {
+        throw Exception("Denominator is not dividable on 100")
+    }
+    return Fraction(this.numerator * x.toInt(), 100)
 }

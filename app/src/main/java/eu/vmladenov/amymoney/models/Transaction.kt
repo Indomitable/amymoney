@@ -61,4 +61,22 @@ data class Transaction(
 
 @XmlTag(XmlTags.Transactions)
 @XmlCollection(Transaction::class)
-class Transactions: BaseList<Transaction>()
+class Transactions(items: Map<String, Transaction> = emptyMap()): BaseMap<Transaction>(items) {
+    val accountsIndex: Map<String, Set<String>>
+
+    init {
+        accountsIndex = buildIndex()
+    }
+
+    private fun buildIndex(): Map<String, Set<String>> {
+        val index = mutableMapOf<String, MutableSet<String>>()
+        for (tran in this.values) {
+            for (split in tran.splits) {
+                index.getOrPut(split.accountId, { mutableSetOf() }).apply {
+                    add(tran.id)
+                }
+            }
+        }
+        return index
+    }
+}

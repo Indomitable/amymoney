@@ -34,6 +34,9 @@ class AccountsFragment : NavigationFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, AccountsViewModelFactory(initialInstitutionId)).get(AccountsViewModel::class.java)
+            .also {
+                bindToViewModel(it)
+            }
     }
 
     override fun onCreateView(
@@ -43,7 +46,6 @@ class AccountsFragment : NavigationFragment() {
         val view = inflater.inflate(R.layout.accounts_fragment, container, false)
 
         initViews(view)
-        bindToViewModel()
         setEvents()
 
         return view
@@ -62,7 +64,7 @@ class AccountsFragment : NavigationFragment() {
         accountsView.adapter = accountsAdapter
     }
 
-    private fun bindToViewModel() {
+    private fun bindToViewModel(viewModel: AccountsViewModel) {
         viewModel.institutions.takeUntil(destroyNotifier).subscribe {
             val selectedItem = viewModel.selectedInstitution
             institutionsAdapter.fill(it)
