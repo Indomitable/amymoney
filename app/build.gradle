@@ -37,15 +37,15 @@ android {
         unitTests.returnDefaultValues = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = "1.8"
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     viewBinding {
         enabled = true
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs = ["-XXLanguage:+NewInference"]  // TODO: Remove at Kotlin 1.4
     }
 // To inline the bytecode built with JVM target 1.8 into
 // bytecode that is being built with JVM target 1.6. (e.g. navArgs)

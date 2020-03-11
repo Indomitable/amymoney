@@ -83,7 +83,7 @@ class Accounts(items: Map<String, Account> = emptyMap()) : BaseMap<Account>(item
     }
 
     private fun getChildren(account: Account): Sequence<Account> {
-        return sequence<Account> {
+        return sequence {
             for (id in account.subAccounts) {
                 val child = this@Accounts[id]
                 if (child != null) {
