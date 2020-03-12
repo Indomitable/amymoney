@@ -1,6 +1,5 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Address
 import eu.vmladenov.amymoney.models.User
 import org.xmlpull.v1.XmlPullParser
@@ -31,7 +30,7 @@ class XmlUserHandler @Inject constructor() : XmlBaseHandler(), IXmlUserHandler {
         )
     }
 
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.user = read(parser)
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.user = read(parser)
     }
 }

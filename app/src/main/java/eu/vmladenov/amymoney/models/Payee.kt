@@ -20,7 +20,7 @@ data class Payee(
 
 @XmlTag(XmlTags.Payees)
 @XmlCollection(Payee::class)
-class Payees(items: Map<String, Payee> = emptyMap()) : BaseMap<Payee>(items)
+class Payees : BaseMap<Payee>()
 
 enum class PayeeIdentifierType(val id: String) {
     IbanBic("org.kmymoney.payeeIdentifier.ibanbic"),

@@ -63,7 +63,7 @@ data class Account(
 
 @XmlTag(XmlTags.Accounts)
 @XmlCollection(Account::class)
-class Accounts(items: Map<String, Account> = emptyMap()) : BaseMap<Account>(items) {
+class Accounts() : BaseMap<Account>() {
     fun getAccounts(type: AccountStandardType): Sequence<Account> {
         val topAccount = this[type.id]
         if (topAccount != null) {

@@ -111,14 +111,14 @@ abstract class XmlBaseSecuritiesHandler(parentTag: XmlTags, childTag: XmlTags): 
 
 @Singleton
 class XmlCurrenciesHandler @Inject constructor(): XmlBaseSecuritiesHandler(XmlTags.Currencies, XmlTags.Currency) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.currencies.fill(readChildren(parser))
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.currencies.fill(readChildren(parser))
     }
 }
 
 @Singleton
 class XmlSecuritiesHandler @Inject constructor(): XmlBaseSecuritiesHandler(XmlTags.Securities, XmlTags.Security) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.securities.fill(readChildren(parser))
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.securities.fill(readChildren(parser))
     }
 }

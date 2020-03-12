@@ -8,8 +8,8 @@ import javax.inject.Singleton
 
 @Singleton
 class XmlCostCentersHandler @Inject constructor(): XmlBaseModelCollectionHandler<CostCenter>(XmlTags.CostCenters, XmlTags.CostCenter) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.costCenters.fill(readChildren(parser))
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.costCenters.fill(readChildren(parser))
     }
 
     override fun readChild(parser: XmlPullParser): CostCenter {

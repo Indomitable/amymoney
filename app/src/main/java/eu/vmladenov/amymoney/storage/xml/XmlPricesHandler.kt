@@ -13,8 +13,8 @@ import javax.inject.Singleton
 class XmlPricesHandler @Inject constructor(): XmlBaseCollectionHandler<PricePair>(XmlTags.Prices, XmlTags.PricePair) {
     private val defaultPriceDate: Date = GregorianCalendar(1998, 11, 31).time
 
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.prices.fill(readChildren(parser))
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.prices.fill(readChildren(parser))
     }
 
     override fun readChild(parser: XmlPullParser): PricePair {

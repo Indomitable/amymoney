@@ -10,8 +10,8 @@ import javax.inject.Singleton
 @Singleton
 class XmlFileInfoHandler @Inject constructor() : XmlBaseHandler() {
 
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.fileInfo = read(parser)
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.fileInfo = read(parser)
     }
 
     fun read(parser: XmlPullParser): FileInfo {

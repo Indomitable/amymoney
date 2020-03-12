@@ -11,10 +11,10 @@ import javax.inject.Singleton
 
 @Singleton
 class XmlInstitutionsHandler @Inject constructor() : XmlBaseModelCollectionHandler<Institution>(XmlTags.Institutions, XmlTags.Institution) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+    override fun update(parser: XmlPullParser, file: XmlFile) {
         val institutions = Institutions()
         institutions.fill(readChildren(parser))
-        repository.institutions.onNext(institutions)
+        file.institutions.fill(institutions)
     }
 
     override fun readChild(parser: XmlPullParser): Institution {

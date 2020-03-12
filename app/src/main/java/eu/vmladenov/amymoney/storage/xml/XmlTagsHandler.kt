@@ -8,9 +8,9 @@ import javax.inject.Singleton
 
 @Singleton
 class XmlTagsHandler @Inject constructor(): XmlBaseModelCollectionHandler<Tag>(XmlTags.Tags, XmlTags.Tag) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+    override fun update(parser: XmlPullParser, file: XmlFile) {
         val tags = readChildrenMap(parser)
-        repository.tags.onNext(Tags(tags))
+        file.tags.fill(tags)
     }
 
     override fun readChild(parser: XmlPullParser): Tag {

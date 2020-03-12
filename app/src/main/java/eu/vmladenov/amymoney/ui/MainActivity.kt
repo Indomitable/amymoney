@@ -2,6 +2,7 @@ package eu.vmladenov.amymoney.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Xml
 import androidx.navigation.NavController
@@ -12,13 +13,12 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
-import eu.vmladenov.amymoney.infrastructure.Fraction
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
-import eu.vmladenov.amymoney.models.Transaction
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
+import eu.vmladenov.amymoney.storage.xml.XmlFile
 import kotlinx.android.synthetic.main.main_layout.*
 import kotlinx.android.synthetic.main.main_view.*
-import java.util.*
+import kotlinx.coroutines.*
 import java.util.zip.GZIPInputStream
 
 
@@ -83,18 +83,30 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val contentResolver = applicationContext.contentResolver
         if (requestCode == FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val selectedFile = data.data ?: return
-            contentResolver.openInputStream(selectedFile).use { inputStream ->
-                GZIPInputStream(inputStream).use { stream ->
-                    val parser = Xml.newPullParser()
-                    parser.setInput(stream, "utf-8")
-                    xmlFileHandler.read(parser)
-                }
+            GlobalScope.launch(Dispatchers.Main) {
+                fillRepo(selectedFile)
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun readFileAsync(fileUrl: Uri): Deferred<XmlFile> {
+        return GlobalScope.async {
+            contentResolver.openInputStream(fileUrl).use { inputStream ->
+                GZIPInputStream(inputStream).use { stream ->
+                    val parser = Xml.newPullParser()
+                    parser.setInput(stream, "utf-8")
+                    return@async xmlFileHandler.read(parser)
+                }
+            }
+        }
+    }
+
+    private suspend fun fillRepo(fileUrl: Uri) {
+        val file = readFileAsync(fileUrl).await()
+        repository.updateFromFile(file)
     }
 }

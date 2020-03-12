@@ -1,40 +1,58 @@
 package eu.vmladenov.amymoney.infrastructure
 
 import eu.vmladenov.amymoney.models.*
+import eu.vmladenov.amymoney.storage.xml.XmlFile
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
 
 interface IAMyMoneyRepository {
-    var fileInfo: FileInfo
-    var user: User
+    val fileInfo: BehaviorSubject<FileInfo>
+    val user: BehaviorSubject<User>
     val institutions: BehaviorSubject<Institutions>
     val payees: BehaviorSubject<Payees>
-    val costCenters: CostCenters
+    val costCenters: BehaviorSubject<CostCenters>
     val tags: BehaviorSubject<Tags>
     val accounts: BehaviorSubject<Accounts>
     val transactions: BehaviorSubject<Transactions>
-    val securities: Securities
-    val currencies: Securities
-    val prices: Prices
-    var extra: Map<String, String>
-    val unsupportedTags: MutableList<UnsupportedTag>
+    val securities: BehaviorSubject<Securities>
+    val currencies: BehaviorSubject<Securities>
+    val prices: BehaviorSubject<Prices>
+    val extra: BehaviorSubject<Map<String, String>>
+    val unsupportedTags: BehaviorSubject<List<UnsupportedTag>>
     fun isEmpty(): Boolean
+    fun updateFromFile(file: XmlFile)
 }
 
 class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
-    override var fileInfo: FileInfo = FileInfo()
-    override var user: User = User()
+    override val fileInfo: BehaviorSubject<FileInfo> = BehaviorSubject.createDefault(FileInfo())
+    override val user: BehaviorSubject<User> = BehaviorSubject.createDefault(User())
     override val institutions: BehaviorSubject<Institutions> = BehaviorSubject.createDefault(Institutions())
     override val payees: BehaviorSubject<Payees> = BehaviorSubject.createDefault(Payees())
-    override val costCenters: CostCenters = CostCenters()
+    override val costCenters: BehaviorSubject<CostCenters> = BehaviorSubject.createDefault(CostCenters())
     override val tags: BehaviorSubject<Tags> = BehaviorSubject.createDefault(Tags())
     override val accounts: BehaviorSubject<Accounts> = BehaviorSubject.createDefault(Accounts())
     override val transactions: BehaviorSubject<Transactions> = BehaviorSubject.createDefault(Transactions())
-    override val securities: Securities = Securities()
-    override val currencies: Securities = Securities()
-    override val prices: Prices = Prices()
-    override var extra: Map<String, String> = emptyMap()
-    override val unsupportedTags: MutableList<UnsupportedTag> = mutableListOf()
+    override val securities: BehaviorSubject<Securities> = BehaviorSubject.createDefault(Securities())
+    override val currencies: BehaviorSubject<Securities> = BehaviorSubject.createDefault(Securities())
+    override val prices: BehaviorSubject<Prices> = BehaviorSubject.createDefault(Prices())
+    override val extra: BehaviorSubject<Map<String, String>> = BehaviorSubject.createDefault(emptyMap())
+    override val unsupportedTags: BehaviorSubject<List<UnsupportedTag>> = BehaviorSubject.createDefault(emptyList())
 
     override fun isEmpty() = accounts.value.size == 0
+
+    override fun updateFromFile(file: XmlFile) {
+        fileInfo.onNext(file.fileInfo)
+        user.onNext(file.user)
+        institutions.onNext(file.institutions)
+        payees.onNext(file.payees)
+        costCenters.onNext(file.costCenters)
+        tags.onNext(file.tags)
+        accounts.onNext(file.accounts)
+        transactions.onNext(file.transactions)
+        securities.onNext(file.securities)
+        currencies.onNext(file.currencies)
+        prices.onNext(file.prices)
+        extra.onNext(file.extra)
+        unsupportedTags.onNext(file.unsupportedTags)
+    }
 }

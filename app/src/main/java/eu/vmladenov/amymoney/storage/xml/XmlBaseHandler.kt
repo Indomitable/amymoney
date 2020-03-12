@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 interface IXmlFileTagHandler {
-    fun update(parser: XmlPullParser, repository: IAMyMoneyRepository)
+    fun update(parser: XmlPullParser, file: XmlFile)
 }
 
 abstract class XmlBaseHandler : IXmlFileTagHandler {

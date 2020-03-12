@@ -61,12 +61,16 @@ data class Transaction(
 
 @XmlTag(XmlTags.Transactions)
 @XmlCollection(Transaction::class)
-class Transactions(items: Map<String, Transaction> = emptyMap()): BaseMap<Transaction>(items) {
-    val accountsIndex: Map<String, Set<String>>
+class Transactions: BaseMap<Transaction>() {
+    private var _accountsIndex: Map<String, Set<String>> = emptyMap()
 
-    init {
-        accountsIndex = buildIndex()
-    }
+    val accountsIndex: Map<String, Set<String>>
+        get () {
+            if (this.size > 0 && _accountsIndex.isEmpty()) {
+                _accountsIndex = buildIndex()
+            }
+            return _accountsIndex
+        }
 
     private fun buildIndex(): Map<String, Set<String>> {
         val index = mutableMapOf<String, MutableSet<String>>()

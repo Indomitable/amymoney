@@ -12,8 +12,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class XmlUnsupportedHandler @Inject constructor(): IXmlFileTagHandler {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
-        repository.unsupportedTags.add(read(parser))
+    override fun update(parser: XmlPullParser, file: XmlFile) {
+        file.unsupportedTags.add(read(parser))
     }
 
     private fun read(parser: XmlPullParser): UnsupportedTag {

@@ -4,6 +4,8 @@ import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountType
 import eu.vmladenov.amymoney.models.Accounts
+import eu.vmladenov.amymoney.models.fill
+import kotlinx.coroutines.Dispatchers
 import org.xmlpull.v1.XmlPullParser
 import java.lang.Exception
 import javax.inject.Inject
@@ -11,9 +13,9 @@ import javax.inject.Singleton
 
 @Singleton
 class XmlAccountHandler @Inject constructor(): XmlBaseModelCollectionHandler<Account>(XmlTags.Accounts, XmlTags.Account) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+    override fun update(parser: XmlPullParser, file: XmlFile) {
         val accounts = readChildrenMap(parser)
-        repository.accounts.onNext(Accounts(accounts))
+        file.accounts.fill(accounts)
     }
 
     override fun readChild(parser: XmlPullParser): Account {

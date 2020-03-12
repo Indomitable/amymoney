@@ -11,9 +11,9 @@ import kotlin.math.floor
 
 @Singleton
 class XmlTransactionsHandler @Inject constructor(): XmlBaseModelCollectionHandler<Transaction>(XmlTags.Transactions, XmlTags.Transaction) {
-    override fun update(parser: XmlPullParser, repository: IAMyMoneyRepository) {
+    override fun update(parser: XmlPullParser, file: XmlFile) {
         val transactions = readChildrenMap(parser)
-        repository.transactions.onNext(Transactions(transactions))
+        file.transactions.fill(transactions)
     }
 
     override fun readChild(parser: XmlPullParser): Transaction {
