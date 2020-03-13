@@ -44,8 +44,6 @@ class MainActivity : BaseActivity() {
         return true
     }*/
 
-
-
     override fun onSupportNavigateUp(): Boolean {
         val navController = getNavController()
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -61,7 +59,15 @@ class MainActivity : BaseActivity() {
 
     private fun initializeNav() {
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.nav_home, R.id.nav_institutions),
+            setOf(
+                R.id.nav_home,
+                R.id.nav_institutions,
+                R.id.nav_accounts,
+                R.id.nav_categories,
+                R.id.nav_tags,
+                R.id.nav_payees,
+                R.id.nav_transactions
+            ),
             mainViewLayout
         )
 
