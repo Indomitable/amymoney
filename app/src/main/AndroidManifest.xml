@@ -18,16 +18,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="http" android:host="*"
-                    android:pathPattern=".*\\.kmy" />
-                <data android:scheme="https" android:host="*"
-                    android:pathPattern=".*\\.kmy" />
-                <data android:scheme="content" android:host="*"
-                    android:pathPattern=".*\\.kmy" />
-                <data android:scheme="file" android:host="*"
-                    android:pathPattern=".*\\.kmy" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.MainActivity" />

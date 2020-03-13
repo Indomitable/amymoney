@@ -12,9 +12,17 @@
         <item
             android:id="@+id/nav_accounts"
             android:title="@string/accounts" />
-        <item android:title="@string/categories" />
-        <item android:title="@string/tags" />
-        <item android:title="@string/payees" />
-        <item android:title="@string/ledgers" />
+        <item
+            android:id="@+id/nav_categories"
+            android:title="@string/categories" />
+        <item
+            android:id="@+id/nav_tags"
+            android:title="@string/tags" />
+        <item
+            android:id="@+id/nav_payees"
+            android:title="@string/payees" />
+        <item
+            android:id="@+id/nav_transactions"
+            android:title="@string/ledgers" />
     </group>
 </menu>

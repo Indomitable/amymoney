@@ -17,6 +17,18 @@
         <action
             android:id="@+id/action_nav_home_to_nav_accounts"
             app:destination="@id/nav_accounts" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_tags"
+            app:destination="@id/nav_tags" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_payees"
+            app:destination="@id/nav_payees" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_transactions"
+            app:destination="@id/nav_transactions" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_categories"
+            app:destination="@id/nav_categories" />
     </fragment>
 
     <fragment
@@ -39,5 +51,32 @@
             android:name="INSTITUTION_ID"
             app:argType="string"
             android:defaultValue="" />
+        <action
+            android:id="@+id/action_nav_accounts_to_transactions"
+            app:destination="@id/nav_transactions" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_categories"
+        android:name="eu.vmladenov.amymoney.ui.views.categories.CategoriesFragment"
+        android:label="@string/categories"
+        tools:layout="@layout/fragment_categories">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_tags"
+        android:name="eu.vmladenov.amymoney.ui.views.tags.TagsFragment"
+        android:label="@string/tags"
+        tools:layout="@layout/fragment_tags">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_payees"
+        android:name="eu.vmladenov.amymoney.ui.views.payees.PayeesFragment"
+        android:label="@string/payees"
+        tools:layout="@layout/fragment_payees">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_transactions"
+        android:name="eu.vmladenov.amymoney.ui.views.transactions.TransactionsFragment"
+        android:label="@string/ledgers"
+        tools:layout="@layout/fragment_transactions">
     </fragment>
 </navigation>
