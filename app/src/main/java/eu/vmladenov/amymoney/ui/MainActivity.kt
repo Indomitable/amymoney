@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Xml
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -14,8 +15,10 @@ import androidx.navigation.ui.setupWithNavController
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
+import eu.vmladenov.amymoney.infrastructure.ProgressReporter
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.storage.xml.XmlFile
+import eu.vmladenov.amymoney.ui.views.dialogs.LoadProgressFragment
 import kotlinx.android.synthetic.main.main_layout.*
 import kotlinx.android.synthetic.main.main_view.*
 import kotlinx.coroutines.*
@@ -43,6 +46,7 @@ class MainActivity : BaseActivity() {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }*/
+
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = getNavController()
@@ -91,28 +95,36 @@ class MainActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val selectedFile = data.data ?: return
+            val handler = Handler()
             GlobalScope.launch(Dispatchers.Main) {
-                fillRepo(selectedFile)
+                ProgressReporter(handler).use { reporter ->
+                    val dialog = LoadProgressFragment()
+                    dialog.reporter = reporter
+                    dialog.show(supportFragmentManager, "progress")
+                    fillRepo(selectedFile, reporter)
+                }
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun readFileAsync(fileUrl: Uri): Deferred<XmlFile> {
+    private fun readFileAsync(fileUrl: Uri, reporter: ProgressReporter): Deferred<XmlFile> {
         return GlobalScope.async {
+            reporter.progress("Unziping file")
             contentResolver.openInputStream(fileUrl).use { inputStream ->
                 GZIPInputStream(inputStream).use { stream ->
                     val parser = Xml.newPullParser()
                     parser.setInput(stream, "utf-8")
-                    return@async xmlFileHandler.read(parser)
+                    reporter.progress("Processing xml file")
+                    return@async xmlFileHandler.read(parser, reporter)
                 }
             }
         }
     }
 
-    private suspend fun fillRepo(fileUrl: Uri) {
-        val file = readFileAsync(fileUrl).await()
+    private suspend fun fillRepo(fileUrl: Uri, reporter: ProgressReporter) {
+        val file = readFileAsync(fileUrl, reporter).await()
         repository.updateFromFile(file)
     }
 }
