@@ -1,29 +1,25 @@
 package eu.vmladenov.amymoney.infrastructure
 
-import android.os.Handler
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import java.io.Closeable
 
 interface IProgressReporter: Closeable {
-    fun progress(message: String)
+    suspend fun progress(message: String)
 
-    val messages: Observable<String>
+    val messages: ReceiveChannel<String>
 }
 
-class ProgressReporter(private val handler: Handler): IProgressReporter {
-    private val messagesObservable = PublishSubject.create<String>()
+class ProgressReporter: IProgressReporter {
+    private val channel = Channel<String>()
 
-    override fun progress(message: String) {
-        handler.post {
-            messagesObservable.onNext(message)
-        }
+    override suspend fun progress(message: String) {
+        channel.send(message)
     }
 
-    override val messages: Observable<String>
-        get() = messagesObservable
+    override val messages: ReceiveChannel<String> = channel
 
     override fun close() {
-        messagesObservable.onComplete()
+        channel.close()
     }
 }

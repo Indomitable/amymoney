@@ -6,7 +6,7 @@ import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 
 interface IXmlFileHandler {
-    fun read(parser: XmlPullParser, progressReporter: IProgressReporter): XmlFile
+    suspend fun read(parser: XmlPullParser, progressReporter: IProgressReporter): XmlFile
 }
 
 class XmlFileHandler @Inject constructor(
@@ -15,7 +15,7 @@ class XmlFileHandler @Inject constructor(
 
     private val kMyMoneyFileTagName = "KMYMONEY-FILE"
 
-    override fun read(parser: XmlPullParser, progressReporter: IProgressReporter): XmlFile {
+    override suspend fun read(parser: XmlPullParser, progressReporter: IProgressReporter): XmlFile {
         var eventType = parser.eventType
         val file = XmlFile()
         progressReporter.progress("Starting file processing...")

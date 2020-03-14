@@ -31,6 +31,7 @@ class MainActivity : BaseActivity() {
     private lateinit var repository: IAMyMoneyRepository
     private lateinit var xmlFileHandler: IXmlFileHandler
 
+    @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_view)
@@ -95,18 +96,27 @@ class MainActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val selectedFile = data.data ?: return
-            val handler = Handler()
-            GlobalScope.launch(Dispatchers.Main) {
-                ProgressReporter(handler).use { reporter ->
-                    val dialog = LoadProgressFragment()
-                    dialog.reporter = reporter
-                    dialog.show(supportFragmentManager, "progress")
-                    fillRepo(selectedFile, reporter)
-                }
-            }
+            loadRepository(selectedFile)
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun loadRepository(fileUrl: Uri) {
+        val reporter = ProgressReporter()
+        GlobalScope.launch(Dispatchers.Main) {
+            val dialog = LoadProgressFragment(reporter)
+            dialog.showNow(supportFragmentManager, "progress")
+            dialog.listen()
+        }
+        GlobalScope.launch {
+            val file = readFileAsync(fileUrl, reporter).await()
+            withContext(Dispatchers.Main) {
+                repository.updateFromFile(file)
+            }
+            reporter.progress("Finish")
+            reporter.close()
+        }
     }
 
     private fun readFileAsync(fileUrl: Uri, reporter: ProgressReporter): Deferred<XmlFile> {
@@ -123,8 +133,4 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private suspend fun fillRepo(fileUrl: Uri, reporter: ProgressReporter) {
-        val file = readFileAsync(fileUrl, reporter).await()
-        repository.updateFromFile(file)
-    }
 }
