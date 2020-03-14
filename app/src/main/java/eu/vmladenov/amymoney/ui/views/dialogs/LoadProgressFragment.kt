@@ -11,7 +11,7 @@ import eu.vmladenov.amymoney.ui.views.DisposableDialogFragment
 import kotlinx.android.synthetic.main.fragment_load_progress.view.*
 
 class LoadProgressFragment(private val reporter: ProgressReporter) : DisposableDialogFragment() {
-    private lateinit var progressView: TextView
+    private var progressView: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,7 +26,7 @@ class LoadProgressFragment(private val reporter: ProgressReporter) : DisposableD
     suspend fun listen() {
         val dialog = this
         for (message in reporter.messages) {
-            progressView.text = message
+            progressView?.text = message // We use showNow so progressView will be initialized, but if we switch to
         }
         dialog.dismiss()
     }
