@@ -57,15 +57,15 @@ data class Transaction(
     @XmlAttribute("bankid") val bankId: String,
     val splits: Splits,
     val extra: Map<String, String>
-): IModel
+) : IModel
 
 @XmlTag(XmlTags.Transactions)
 @XmlCollection(Transaction::class)
-class Transactions: BaseMap<Transaction>() {
+class Transactions : BaseMap<Transaction>() {
     private var _accountsIndex: Map<String, Set<String>> = emptyMap()
 
     val accountsIndex: Map<String, Set<String>>
-        get () {
+        get() {
             if (this.size > 0 && _accountsIndex.isEmpty()) {
                 _accountsIndex = buildIndex()
             }
@@ -84,3 +84,5 @@ class Transactions: BaseMap<Transaction>() {
         return index
     }
 }
+
+object TransactionComparable : Comparable<Transaction>()

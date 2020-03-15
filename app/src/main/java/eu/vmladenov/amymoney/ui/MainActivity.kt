@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Xml
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -119,8 +118,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun readFileAsync(fileUrl: Uri, reporter: ProgressReporter): Deferred<XmlFile> {
-        return GlobalScope.async {
+    private suspend fun readFileAsync(fileUrl: Uri, reporter: ProgressReporter): Deferred<XmlFile> = coroutineScope {
+        return@coroutineScope async {
             reporter.progress("Unziping file")
             contentResolver.openInputStream(fileUrl).use { inputStream ->
                 GZIPInputStream(inputStream).use { stream ->
@@ -132,5 +131,4 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
 }

@@ -21,6 +21,10 @@ interface IAMyMoneyRepository {
     val unsupportedTags: BehaviorSubject<List<UnsupportedTag>>
     fun isEmpty(): Boolean
     fun updateFromFile(file: XmlFile)
+
+    val currentAccounts: Accounts
+    val currentPayees: Payees
+    val currentTags: Tags
 }
 
 class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
@@ -37,6 +41,15 @@ class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
     override val prices: BehaviorSubject<Prices> = BehaviorSubject.createDefault(Prices())
     override val extra: BehaviorSubject<Map<String, String>> = BehaviorSubject.createDefault(emptyMap())
     override val unsupportedTags: BehaviorSubject<List<UnsupportedTag>> = BehaviorSubject.createDefault(emptyList())
+
+    override val currentAccounts: Accounts
+        get() = accounts.value
+
+    override val currentPayees: Payees
+        get() = payees.value
+
+    override val currentTags: Tags
+        get() = tags.value
 
     override fun isEmpty() = accounts.value.size == 0
 

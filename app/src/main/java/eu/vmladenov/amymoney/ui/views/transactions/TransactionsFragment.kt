@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import eu.vmladenov.amymoney.R
+import eu.vmladenov.amymoney.models.Transaction
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
 
 class TransactionsFragment : NavigationFragment() {
@@ -19,4 +20,9 @@ class TransactionsFragment : NavigationFragment() {
         return inflater.inflate(R.layout.fragment_transactions, container, false)
     }
 
+}
+
+
+interface TransactionClickHandler {
+    fun handle(transaction: Transaction)
 }
