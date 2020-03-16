@@ -13,14 +13,11 @@ import eu.vmladenov.amymoney.models.AccountComparable
 import kotlinx.android.synthetic.main.accounts_list_item.view.*
 
 
-class AccountsAdapter : ListAdapter<Account, AccountsAdapter.ViewHolder>(AccountComparable) {
-
-    var clickHandler: AccountClickHandler? = null
-
+class AccountsAdapter(val clickHandler: AccountClickHandler) : ListAdapter<Account, AccountsAdapter.ViewHolder>(AccountComparable) {
 
     private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
         val item = v.tag as Account
-        clickHandler?.handle(item)
+        clickHandler.handle(item)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

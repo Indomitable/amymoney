@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorListItemText">#000000</color>
+    <color name="transaction_list_item_border_color">#D2D2D2</color>
 </resources>

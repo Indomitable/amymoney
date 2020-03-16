@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <item
+        android:height="@dimen/transaction_list_item_border_width"
+        android:gravity="bottom"
+        >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transaction_list_item_border_color"/>
+        </shape>
+    </item>
+    <item
+        android:width="@dimen/transaction_list_item_border_width"
+        android:gravity="left"
+        >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transaction_list_item_border_color"/>
+        </shape>
+    </item>
+    <item
+        android:width="@dimen/transaction_list_item_border_width"
+        android:gravity="right"
+        >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transaction_list_item_border_color"/>
+        </shape>
+    </item>
+</layer-list>

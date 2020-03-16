@@ -20,7 +20,7 @@ import java.util.*
 class TransactionsAdapter(private val repository: IAMyMoneyRepository) :
     ListAdapter<Transaction, TransactionsAdapter.ViewHolder>(TransactionComparable) {
 
-    private var accountId: String = ""
+    private var counterAccount: String = ""
     var clickHandler: TransactionClickHandler? = null
     private val UNASSIGNED = "*** UNASSIGNED ***"
     private val SPLIT_TRANSACTIONS = "Split transaction"
@@ -33,7 +33,7 @@ class TransactionsAdapter(private val repository: IAMyMoneyRepository) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.accounts_list_item, parent, false) as LinearLayout
+            .inflate(R.layout.transaction_list_item, parent, false) as LinearLayout
         return ViewHolder(itemView)
     }
 
@@ -42,12 +42,12 @@ class TransactionsAdapter(private val repository: IAMyMoneyRepository) :
         holder.bind(item)
     }
 
-    fun setSource(accountId: String, transactions: List<Transaction>) {
-        this.accountId = accountId
+    fun setSource(counterAccount: String, transactions: List<Transaction>) {
+        this.counterAccount = counterAccount
         submitList(transactions.sortedByDescending { t -> t.postDate })
     }
 
-    inner class ViewHolder(private val itemLayout: LinearLayout) : RecyclerView.ViewHolder(itemLayout) {
+    inner class ViewHolder(val itemLayout: LinearLayout) : RecyclerView.ViewHolder(itemLayout) {
         private val payeeView: TextView = itemLayout.transaction_item_payee
         private val dateView: TextView = itemLayout.transaction_item_date
         private val valueView: TextView = itemLayout.transaction_item_value
@@ -60,13 +60,27 @@ class TransactionsAdapter(private val repository: IAMyMoneyRepository) :
             if (transaction.postDate != null) {
                 dateView.text = DateFormat.getDateInstance(DateFormat.SHORT).format(transaction.postDate)
             }
-            val accountSplit = transaction.splits.first { s -> s.accountId == accountId }
-            payeeView.text = getPayeeName(transaction, accountSplit)
-            valueView.text = getValue(transaction, accountSplit)
+            val splits = getSplits(transaction)
+            payeeView.text = getPayeeName(transaction, splits)
+            valueView.text = getValue(transaction, splits)
         }
 
-        private fun getPayeeName(transaction: Transaction, accountSplit: Split): String {
-            val payee = if (accountSplit.payeeId.isNotEmpty()) repository.currentPayees[accountSplit.payeeId]?.name else null
+        private fun getSplits(transaction: Transaction): Pair<Split, List<Split>> {
+            var counterAccountSplit: Split? = null
+            val otherAccountsSplits = mutableListOf<Split>()
+            for (split in transaction.splits) {
+                if (split.accountId == counterAccount) {
+                    // the counter account for the transaction always is the user account
+                    counterAccountSplit = split
+                } else {
+                    otherAccountsSplits.add(split)
+                }
+            }
+            return Pair(counterAccountSplit!!, otherAccountsSplits)
+        }
+
+        private fun getPayeeName(transaction: Transaction, splits: Pair<Split, List<Split>>): String {
+            val payee = if (splits.first.payeeId.isNotEmpty()) repository.currentPayees[splits.first.payeeId]?.name else null
             if (!payee.isNullOrEmpty())
                 // if payee exists return its name
                 return payee
@@ -75,21 +89,20 @@ class TransactionsAdapter(private val repository: IAMyMoneyRepository) :
                 return transaction.memo
             }
             // check other splits
-            val otherAccountSplits = transaction.splits.filter { s -> s.accountId != accountId }
-            return when (otherAccountSplits.size) {
+            return when (splits.second.size) {
                 0 -> UNASSIGNED // when no other splits not assigned.
                 1 -> {
-                    val otherAccount = repository.currentAccounts[otherAccountSplits[0].accountId]
+                    val otherAccount = repository.currentAccounts[splits.second[0].accountId]
                     otherAccount?.name ?: UNASSIGNED // Exactly one other split get category from it, if no category return unassigned
                 }
                 else -> SPLIT_TRANSACTIONS // if more than 1 other split return split transaction
             }
         }
 
-        private fun getValue(transaction: Transaction, accountSplit: Split): String {
+        private fun getValue(transaction: Transaction, splits: Pair<Split, List<Split>>): String {
             val format: NumberFormat = NumberFormat.getCurrencyInstance()
             format.currency = Currency.getInstance(transaction.commodity)
-            return format.format(accountSplit.value.toDecimal().toDouble())
+            return format.format(splits.first.value.toDecimal().toDouble())
         }
     }
 }

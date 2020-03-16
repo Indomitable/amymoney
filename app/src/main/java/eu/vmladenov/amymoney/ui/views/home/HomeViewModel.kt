@@ -27,7 +27,7 @@ class HomeViewModel(val repository: IAMyMoneyRepository) : DisposableViewModel()
 
     val isDataLoaded: Observable<Boolean>
         get() = repository.accounts.map {
-            it.size > 0
+            it.getUserAccounts().any()
         }
 
     val assetAccountsBalance: Observable<Sequence<AccountBalance>> =

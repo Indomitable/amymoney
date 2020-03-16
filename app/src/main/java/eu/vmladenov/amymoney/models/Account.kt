@@ -1,8 +1,8 @@
 package eu.vmladenov.amymoney.models
 
 import eu.vmladenov.amymoney.storage.xml.XmlTags
-import java.lang.Exception
 import java.util.*
+import kotlin.Exception
 
 enum class AccountStandardType(val id: String) {
     Liability("AStd::Liability"),
@@ -82,6 +82,22 @@ class Accounts() : BaseMap<Account>() {
         ).flatten()
     }
 
+    fun favoriteOrFirstUserAccount(): Account {
+        var firstAccount: Account? = null
+        for (account in getUserAccounts()) {
+            if (firstAccount == null) {
+                firstAccount = account
+            }
+            if (account.extra.getOrDefault("PreferredAccount", "No").equals("Yes", false)) {
+                return account
+            }
+        }
+        if (firstAccount == null) {
+            throw Exception("No user accounts")
+        }
+        return firstAccount
+    }
+
     private fun getChildren(account: Account): Sequence<Account> {
         return sequence {
             for (id in account.subAccounts) {
@@ -95,53 +111,29 @@ class Accounts() : BaseMap<Account>() {
     }
 
 
-//    fun getTopUserAccounts(): Sequence<Account> {
-//        return sequence {
-//            for (topAccount in tree) {
-//                if (isUserAccount(topAccount.value)) {
-//                    yield(topAccount.value)
-//                }
-//            }
-//        }
-//    }
-//
-//    fun getUserAccounts(): Sequence<Account> {
-//        return sequence {
-//            for (topAccount in getTopUserAccounts()) {
-//                y
-//            }
-//        }
-//    }
-//
-//
-//    private fun buildTree(accounts: Map<String, Account>): Map<String, Account> {
-//        val topItems = mutableMapOf<String, Account>()
-//        for (account in accounts.values) {
-//            if (account.isAccountStandardType()) {
-//                account.parent = null
-//                account.children.putAll(getChildren(account, accounts))
-//                topItems[account.id] = account
-//            }
-//        }
-//        return topItems
-//    }
-//
-//    private fun getChildren(account: Account, accounts: Map<String, Account>): Sequence<Pair<String, Account>> {
-//        return sequence {
-//            for (childId in account.subAccounts) {
-//                val child: Account = accounts[childId] ?: throw Exception("Sub account not found")
-//                child.parent = account
-//                child.children.putAll(getChildren(child, accounts))
-//                yield(child.id to child)
-//            }
-//        }
-//    }
+    fun isUserAccount(accountId: String): Boolean {
+        val account = this[accountId] ?: return false
+        val topAccount = getTopAccount(account)
+        return (topAccount.id == AccountStandardType.Asset.id ||
+                topAccount.id == AccountStandardType.Liability.id)
+    }
 
-//    fun isUserAccount(account: Account): Boolean {
-//        val topAccount = getTopAccount(account)
-//        return (topAccount.id == AccountStandardType.Asset.id ||
-//            topAccount.id == AccountStandardType.Liability.id)
-//    }
+    private fun getParentAccount(account: Account): Account? {
+        val parentAccountId: String? = account.parentAccountId
+        if (parentAccountId.isNullOrEmpty()) {
+            return null
+        }
+        return this[parentAccountId]
+    }
+
+    private fun getTopAccount(account: Account): Account {
+        val parentAccount = getParentAccount(account)
+        if (parentAccount != null) {
+            return getTopAccount(parentAccount)
+        }
+        return account
+    }
+
 //
 //    fun isTransactionAccount(account: Account): Boolean {
 //        val topAccount = getTopAccount(account)
@@ -149,22 +141,7 @@ class Accounts() : BaseMap<Account>() {
 //                topAccount.id == AccountStandardType.Expense.id)
 //    }
 //
-//    private fun getParentAccount(account: Account): Account? {
-//        val parentAccountId: String? = account.parentAccountId
-//        if (parentAccountId.isNullOrEmpty()) {
-//            return null
-//        }
-//        return this[parentAccountId]
-//    }
-//
-//    fun getTopAccount(account: Account): Account {
-//        val parentAccount = getParentAccount(account)
-//        return if (parentAccount != null) {
-//            getTopAccount(parentAccount)
-//        } else {
-//            account
-//        }
-//    }
+
 
 }
 

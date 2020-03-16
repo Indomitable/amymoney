@@ -12,12 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
+import eu.vmladenov.amymoney.ui.views.transactions.TransactionsFragment
 import kotlinx.android.synthetic.main.accounts_fragment.view.*
 
 class AccountsFragment : NavigationFragment() {
     private lateinit var viewModel: AccountsViewModel
     private lateinit var institutionsAdapter: InstitutionsSpinnerAdapter
-    private lateinit var accountsAdapter: AccountsAdapter
+    private val accountsAdapter = AccountsAdapter(object : AccountClickHandler {
+        override fun handle(account: Account) {
+            val navController = getNavController()
+            val action = AccountsFragmentDirections.actionNavAccountsToTransactions(account.id)
+            navController.navigate(action)
+        }
+    })
     private lateinit var institutionsView: Spinner
     private lateinit var accountsView: RecyclerView
 
@@ -59,7 +66,6 @@ class AccountsFragment : NavigationFragment() {
         institutionsView.adapter = institutionsAdapter
 
         accountsView = view.accountsList
-        accountsAdapter = AccountsAdapter()
         accountsView.layoutManager = LinearLayoutManager(context)
         accountsView.adapter = accountsAdapter
     }
@@ -80,12 +86,6 @@ class AccountsFragment : NavigationFragment() {
     }
 
     private fun setEvents() {
-        accountsAdapter.clickHandler = object : AccountClickHandler {
-            override fun handle(account: Account) {
-
-            }
-        }
-
         institutionsView.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 viewModel.selectedInstitution = null

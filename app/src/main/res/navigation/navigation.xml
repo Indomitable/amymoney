@@ -50,7 +50,7 @@
         <argument
             android:name="INSTITUTION_ID"
             app:argType="string"
-            android:defaultValue="" />
+            app:nullable="false" />
         <action
             android:id="@+id/action_nav_accounts_to_transactions"
             app:destination="@id/nav_transactions" />
@@ -78,5 +78,11 @@
         android:name="eu.vmladenov.amymoney.ui.views.transactions.TransactionsFragment"
         android:label="@string/ledgers"
         tools:layout="@layout/fragment_transactions">
+
+        <argument
+            android:name="COUNTER_ACCOUNT_ID"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue=""/>
     </fragment>
 </navigation>
