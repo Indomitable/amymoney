@@ -6,6 +6,7 @@ import dagger.Module
 import eu.vmladenov.amymoney.infrastructure.AMyMoneyRepository
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.dagger.XmlHandlerComponent
+import eu.vmladenov.amymoney.ui.dagger.UiComponent
 import javax.inject.Scope
 
 @Scope
@@ -26,6 +27,8 @@ internal abstract class AppModule {
 abstract class AppComponent {
 
     abstract fun getXmlHandlerComponentFactory(): XmlHandlerComponent.Factory
+
+    abstract fun getUiComponentFactory(): UiComponent.Factory
 
     abstract fun getRepository(): IAMyMoneyRepository
 }

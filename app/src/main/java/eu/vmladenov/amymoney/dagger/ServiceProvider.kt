@@ -2,6 +2,7 @@ package eu.vmladenov.amymoney.dagger
 
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
+import eu.vmladenov.amymoney.ui.views.transactions.ITransactionViewModelFactory
 import java.lang.Exception
 import kotlin.reflect.KClass
 
@@ -12,6 +13,10 @@ object ServiceProvider {
         injector.getXmlHandlerComponentFactory().create()
     }
 
+    private val uiComponent by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
+        injector.getUiComponentFactory().create()
+    }
+
     @Suppress("UNCHECKED_CAST")
     fun <T: Any> getService(service: KClass<T>): T {
         if (service == IAMyMoneyRepository::class) {
@@ -19,6 +24,9 @@ object ServiceProvider {
         }
         if (service == IXmlFileHandler::class) {
             return xmlHandlerComponent.getXmlFileReader() as T
+        }
+        if (service == ITransactionViewModelFactory::class) {
+            return uiComponent.getTransactionViewModelFactory() as T
         }
         throw Exception("Not supported")
     }

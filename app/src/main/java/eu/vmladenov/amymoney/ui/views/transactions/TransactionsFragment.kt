@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,35 +17,30 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
-import eu.vmladenov.amymoney.models.Transaction
+import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
-import kotlinx.android.synthetic.main.fragment_transactions.*
 import kotlinx.android.synthetic.main.fragment_transactions.view.*
 import kotlinx.android.synthetic.main.fragment_transactions.view.balanceText
-import java.text.NumberFormat
 
 class TransactionsFragment : NavigationFragment() {
 
     private lateinit var viewModel: TransactionsViewModel
-    private lateinit var transactionsAdapter: TransactionsAdapter
-    private lateinit var initialCounterAccountId: String
+    private lateinit var initialCounterAccount: Account
     private lateinit var balanceText: TextView
+    private val transactionsAdapter: TransactionsAdapter = TransactionsAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
 
-        transactionsAdapter = TransactionsAdapter(repository)
-        initialCounterAccountId = arguments?.let { TransactionsFragmentArgs.fromBundle(it).COUNTERACCOUNTID } ?: ""
-        if (initialCounterAccountId.isEmpty()) {
-            initialCounterAccountId = repository.currentAccounts.favoriteOrFirstUserAccount().id
-        }
+        val accountId = arguments?.let { TransactionsFragmentArgs.fromBundle(it).COUNTERACCOUNTID } ?: ""
+        initialCounterAccount = repository.currentAccounts[accountId] ?: repository.currentAccounts.favoriteOrFirstUserAccount()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val transactionsFilter = TransactionsFilter(
-            counterAccountId = initialCounterAccountId
+            counterAccount = initialCounterAccount
         )
 
         viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionsFilter)).get(TransactionsViewModel::class.java)
@@ -62,6 +57,7 @@ class TransactionsFragment : NavigationFragment() {
         val view = inflater.inflate(R.layout.fragment_transactions, container, false)
         balanceText = view.balanceText
         initView(view)
+        setEvents(view)
         return view
     }
 
@@ -69,12 +65,12 @@ class TransactionsFragment : NavigationFragment() {
         viewModel.transactions
             .takeUntil(destroyNotifier)
             .subscribe {
-                transactionsAdapter.setSource(viewModel.transactionsFilter.counterAccountId, it)
+                transactionsAdapter.update(viewModel.transactionsFilter.counterAccount, it)
             }
         viewModel.balance
             .takeUntil(destroyNotifier)
             .subscribe {
-                balanceText.text = it
+                balanceText.text = it.toString()
             }
     }
 
@@ -82,7 +78,36 @@ class TransactionsFragment : NavigationFragment() {
         val transactionsView = view.transactionsList
         transactionsView.adapter = transactionsAdapter
         transactionsView.layoutManager = LinearLayoutManager(context)
+        transactionsView.setHasFixedSize(true)
         transactionsView.addItemDecoration(TopBorderDecorator(requireContext()), 0)
+    }
+
+    private fun setEvents(view: View) {
+        val transactionsView = view.transactionsList
+        val manager = (transactionsView.layoutManager as LinearLayoutManager)
+
+        transactionsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            val bottomThreshold = 3
+            var loading = false
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (loading) {
+                    return
+                }
+                val itemsCount = transactionsAdapter.itemCount
+
+                val lastVisibleItem = manager.findLastVisibleItemPosition()
+                if (itemsCount <= lastVisibleItem + bottomThreshold) {
+                    loading = true
+                    println(Log.d("Trans", "Loading, size: $itemsCount, lastVisible: $lastVisibleItem"))
+                    recyclerView.post {
+                        transactionsAdapter.loadMoreTransactions()
+                        loading = false
+                    }
+                }
+                viewModel.recalculateBalance(manager.findFirstVisibleItemPosition())
+            }
+        })
     }
 
     companion object {
@@ -98,7 +123,7 @@ class TransactionsFragment : NavigationFragment() {
 
 
 interface TransactionClickHandler {
-    fun handle(transaction: Transaction)
+    fun handle(transactionId: String)
 }
 
 /**
@@ -108,7 +133,7 @@ class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
     private var mBounds = Rect()
     private val color: Int = ContextCompat.getColor(context, R.color.transaction_list_item_border_color)
     private val width: Float = context.resources.displayMetrics.density * 2f
-        // TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics)
+    // TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics)
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         c.save()
