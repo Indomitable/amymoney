@@ -4,15 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import eu.vmladenov.amymoney.dagger.ServiceProvider
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
+import eu.vmladenov.amymoney.models.Transaction
 import eu.vmladenov.amymoney.ui.views.DisposableViewModel
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.BiFunction
+import io.reactivex.rxjava3.functions.Function3
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
 import kotlinx.coroutines.*
 import java.math.BigDecimal
-import java.text.NumberFormat
 import java.util.*
 
 class TransactionsViewModelFactory(private val filter: TransactionsFilter) : ViewModelProvider.Factory {
@@ -30,8 +31,8 @@ class TransactionsViewModel(
     filter: TransactionsFilter
 ) : DisposableViewModel() {
     private val filterSubject = BehaviorSubject.createDefault(filter)
-    private val formatters = mutableMapOf<String, NumberFormat>()
     private val firstVisibleItemSubject = PublishSubject.create<Int>()
+    private var totalBalanceSubject = BehaviorSubject.createDefault(BigDecimal(0.0))
 
     val transactions: Observable<List<TransactionViewModel>>
         get() {
@@ -43,32 +44,17 @@ class TransactionsViewModel(
                 .map topMap@{ p ->
                     val transactions = p.first.values
                     return@topMap transactions
-                        .filter { p.second.checkTransaction(it) }
-                        .sortedByDescending { t -> t.postDate }
+                        .filter {
+                            it.postDate != null && it.postDate < GregorianCalendar().time && p.second.checkTransaction(it)
+                        }
                         .map map@{
                             return@map viewModelFactory.map(it, p.second.counterAccount.id)
                         }
+                        .sortedWith(compareByDescending<TransactionViewModel> { it.date }.thenByDescending { it.number } )
                 }
-        }
-
-    val totalBalance: Observable<BigDecimal>
-        get() {
-            return transactions
-                .switchMap { transactions ->
-                    return@switchMap Observable.create<BigDecimal> { emitter ->
-                        if (transactions.isNotEmpty()) {
-                            GlobalScope.launch {
-                                val balance = getBalanceAsync(transactionsFilter.counterAccount.id, transactions, 0).await()
-//                                val formattedBalance = getFormatter().format(balance)
-                                withContext(Dispatchers.Main) {
-                                    emitter.onNext(balance)
-                                }
-                                emitter.onComplete()
-                            }
-                        } else {
-                            emitter.onNext(BigDecimal(0.0))
-                            emitter.onComplete()
-                        }
+                .doOnNext {
+                    GlobalScope.launch {
+                        totalBalanceSubject.onNext(getBalanceAsync(it).await())
                     }
                 }
         }
@@ -76,19 +62,17 @@ class TransactionsViewModel(
     val balance: Observable<BigDecimal>
         get() {
             return Observable.combineLatest(
-                    firstVisibleItemSubject,
+                    firstVisibleItemObservable,
                     transactions,
-                    BiFunction { f, t -> Pair(f, t) }
+                    totalBalanceSubject,
+                    Function3 { f, t, b -> Triple(f, t, b) }
                 )
                 .switchMap { pair ->
                     return@switchMap Observable.create<BigDecimal> { emitter ->
                         if (pair.second.isNotEmpty()) {
                             GlobalScope.launch {
-                                val balance = getBalanceAsync(transactionsFilter.counterAccount.id, pair.second, pair.first).await()
-//                                val formattedBalance = getFormatter().format(balance)
-                                withContext(Dispatchers.Main) {
-                                    emitter.onNext(balance)
-                                }
+                                val balance = getBalanceAsync(pair.second, pair.first).await()
+                                emitter.onNext(pair.third - balance)
                                 emitter.onComplete()
                             }
                         } else {
@@ -97,6 +81,7 @@ class TransactionsViewModel(
                         }
                     }
                 }
+                .observeOn(AndroidSchedulers.mainThread())
         }
 
     var transactionsFilter: TransactionsFilter
@@ -105,25 +90,28 @@ class TransactionsViewModel(
             filterSubject.onNext(value)
         }
 
-    private suspend fun getBalanceAsync(accountId: String, transactions: Iterable<TransactionViewModel>, skip: Int): Deferred<BigDecimal> =
+    private val firstVisibleItemObservable: Observable<Int> = firstVisibleItemSubject.distinctUntilChanged { t1, t2 -> t1 == t2 }
+
+    private suspend fun getBalanceAsync(transactions: Iterable<TransactionViewModel>, take: Int): Deferred<BigDecimal> =
         coroutineScope {
             return@coroutineScope async {
                 return@async transactions
-                    .filter { t -> t.date!! < GregorianCalendar().time }
-                    .drop(skip)
+                    .take(take)
                     .fold(BigDecimal(0.0)) { acc: BigDecimal, transaction: TransactionViewModel ->
                         return@fold acc + transaction.value
                     }
             }
         }
 
-    private fun getFormatter(): NumberFormat {
-        return formatters.getOrPut(transactionsFilter.counterAccount.currencyId, {
-            return@getOrPut NumberFormat.getCurrencyInstance().also {
-                it.currency = Currency.getInstance(transactionsFilter.counterAccount.currencyId)
+    private suspend fun getBalanceAsync(transactions: Iterable<TransactionViewModel>): Deferred<BigDecimal> =
+        coroutineScope {
+            return@coroutineScope async {
+                return@async transactions
+                    .fold(BigDecimal(0.0)) { acc: BigDecimal, transaction: TransactionViewModel ->
+                        return@fold acc + transaction.value
+                    }
             }
-        })
-    }
+        }
 
     fun recalculateBalance(findFirstVisibleItemPosition: Int) {
         firstVisibleItemSubject.onNext(findFirstVisibleItemPosition)

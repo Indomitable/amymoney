@@ -21,13 +21,17 @@ import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
 import kotlinx.android.synthetic.main.fragment_transactions.view.*
 import kotlinx.android.synthetic.main.fragment_transactions.view.balanceText
+import java.text.NumberFormat
+import java.util.*
 
 class TransactionsFragment : NavigationFragment() {
 
     private lateinit var viewModel: TransactionsViewModel
     private lateinit var initialCounterAccount: Account
     private lateinit var balanceText: TextView
+    private val formatter: NumberFormat = NumberFormat.getCurrencyInstance()
     private val transactionsAdapter: TransactionsAdapter = TransactionsAdapter()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +46,11 @@ class TransactionsFragment : NavigationFragment() {
         val transactionsFilter = TransactionsFilter(
             counterAccount = initialCounterAccount
         )
-
+        formatter.currency = Currency.getInstance(transactionsFilter.counterAccount.currencyId)
         viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionsFilter)).get(TransactionsViewModel::class.java)
             .also {
                 bindToViewModel(it)
             }
-
     }
 
     override fun onCreateView(
@@ -65,12 +68,12 @@ class TransactionsFragment : NavigationFragment() {
         viewModel.transactions
             .takeUntil(destroyNotifier)
             .subscribe {
-                transactionsAdapter.update(viewModel.transactionsFilter.counterAccount, it)
+                transactionsAdapter.update(viewModel.transactionsFilter.counterAccount, it, formatter)
             }
         viewModel.balance
             .takeUntil(destroyNotifier)
             .subscribe {
-                balanceText.text = it.toString()
+                balanceText.text = formatter.format(it.toDouble())
             }
     }
 

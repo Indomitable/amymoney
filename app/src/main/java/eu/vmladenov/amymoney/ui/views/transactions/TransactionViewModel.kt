@@ -25,7 +25,8 @@ class TransactionViewModelFactory @Inject constructor(private val repository: IA
             payee = getPayeeName(transaction, splits),
             date = transaction.postDate,
             value = getValue(splits),
-            currency = transaction.commodity
+            currency = transaction.commodity,
+            number = splits.first.number.toIntOrNull()
         )
     }
 
@@ -74,5 +75,6 @@ data class TransactionViewModel(
     val payee: String,
     val date: Date?,
     val value: BigDecimal,
-    val currency: String
+    val currency: String,
+    val number: Int?
 )

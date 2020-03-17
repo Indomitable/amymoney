@@ -19,7 +19,7 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
 
     private lateinit var counterAccount: Account
     private lateinit var transactions: List<TransactionViewModel>
-    private lateinit var format: NumberFormat
+    private lateinit var formatter: NumberFormat
 
     private var clickHandler: TransactionClickHandler? = null
 
@@ -31,12 +31,14 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
         clickHandler?.handle(item.id)
     }
 
-    fun update(counterAccount: Account, transactions: List<TransactionViewModel>) {
+    fun update(
+        counterAccount: Account,
+        transactions: List<TransactionViewModel>,
+        formatter: NumberFormat
+    ) {
         this.counterAccount = counterAccount
         this.transactions = transactions
-        this.format = NumberFormat.getCurrencyInstance().also {
-            it.currency = Currency.getInstance(counterAccount.currencyId)
-        }
+        this.formatter = formatter
         loadMoreTransactions()
     }
 
@@ -64,10 +66,8 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
         val toIndex = min(maxSize, from + 20)
 
         val newTransactions = transactions.subList(from, toIndex)
-        for (transaction in newTransactions) {
-            currentViewTransactions.add(transaction)
-            notifyItemInserted(currentViewTransactions.size - 1)
-        }
+        currentViewTransactions.addAll(newTransactions)
+        notifyItemRangeInserted(from, toIndex - from)
     }
 
     inner class ViewHolder(private val itemLayout: LinearLayout) : RecyclerView.ViewHolder(itemLayout) {
@@ -85,7 +85,7 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
                 dateView.text = DateFormat.getDateInstance(DateFormat.SHORT).format(transaction.date)
             }
             payeeView.text = transaction.payee
-            valueView.text = format.format(transaction.value)
+            valueView.text = formatter.format(transaction.value)
         }
     }
 }
