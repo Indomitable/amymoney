@@ -26,13 +26,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/transactions_balance_container"
+        android:id="@+id/transaction_list_container"
         >
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactionsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:paddingTop="10dp"
+            android:clipToPadding="false"
             android:layout_marginLeft="@dimen/small_padding"
             android:layout_marginRight="@dimen/small_padding"
             tools:listitem="@layout/transaction_list_item" />

@@ -88,25 +88,32 @@ class TransactionsFragment : NavigationFragment() {
     private fun setEvents(view: View) {
         val transactionsView = view.transactionsList
         val manager = (transactionsView.layoutManager as LinearLayoutManager)
+        val container = view.transaction_list_container
 
         transactionsView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             val bottomThreshold = 3
             var loading = false
+            var scrollY = 0
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                scrollY += dy
                 if (loading) {
                     return
                 }
                 val itemsCount = transactionsAdapter.itemCount
-
                 val lastVisibleItem = manager.findLastVisibleItemPosition()
                 if (itemsCount <= lastVisibleItem + bottomThreshold) {
                     loading = true
-                    println(Log.d("Trans", "Loading, size: $itemsCount, lastVisible: $lastVisibleItem"))
                     recyclerView.post {
                         transactionsAdapter.loadMoreTransactions()
                         loading = false
                     }
+                }
+                if (scrollY > 0 && container.background == null) {
+                    container.background = resources.getDrawable(R.drawable.transactions_balance_container, null)
+                }
+                if (scrollY == 0) {
+                    container.background = null
                 }
                 viewModel.recalculateBalance(manager.findFirstVisibleItemPosition())
             }
@@ -135,7 +142,7 @@ interface TransactionClickHandler {
 class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
     private var mBounds = Rect()
     private val color: Int = ContextCompat.getColor(context, R.color.transaction_list_item_border_color)
-    private val width: Float = context.resources.displayMetrics.density * 2f
+    private val width: Float = context.resources.displayMetrics.density * 1.5f
     // TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics)
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -146,7 +153,7 @@ class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
             parent.getDecoratedBoundsWithMargins(child, mBounds)
             val top = mBounds.top.toFloat()
             if (top >= 0) {
-                c.drawLine(0f, top, parent.width.toFloat(), 0f, Paint().also { p ->
+                c.drawLine(0f, top, parent.width.toFloat(), top, Paint().also { p ->
                     p.color = color
                     p.strokeWidth = width
                 })
