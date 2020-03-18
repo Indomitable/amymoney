@@ -2,6 +2,7 @@ package eu.vmladenov.amymoney.infrastructure
 
 import eu.vmladenov.amymoney.models.*
 import eu.vmladenov.amymoney.storage.xml.XmlFile
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
 
@@ -19,7 +20,7 @@ interface IAMyMoneyRepository {
     val prices: BehaviorSubject<Prices>
     val extra: BehaviorSubject<Map<String, String>>
     val unsupportedTags: BehaviorSubject<List<UnsupportedTag>>
-    fun isEmpty(): Boolean
+    fun isEmpty(): Observable<Boolean>
     fun updateFromFile(file: XmlFile)
 
     val currentAccounts: Accounts
@@ -51,7 +52,7 @@ class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
     override val currentTags: Tags
         get() = tags.value
 
-    override fun isEmpty() = accounts.value.size == 0
+    override fun isEmpty(): Observable<Boolean> = accounts.map { a -> a.values.isEmpty() }
 
     override fun updateFromFile(file: XmlFile) {
         fileInfo.onNext(file.fileInfo)

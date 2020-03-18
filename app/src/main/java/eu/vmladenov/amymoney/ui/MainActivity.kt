@@ -5,6 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Xml
+import android.view.View
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -34,12 +37,19 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_view)
-        setSupportActionBar(mainToolbar)
-        initializeNav()
-        initFloatButton()
 
         repository = ServiceProvider.getService(IAMyMoneyRepository::class)
         xmlFileHandler = ServiceProvider.getService(IXmlFileHandler::class)
+
+        setSupportActionBar(mainToolbar)
+        repository.isEmpty()
+            .takeUntil(destroyNotifier)
+            .subscribe { isEmpty ->
+                if (!isEmpty) {
+                    initializeNav()
+                }
+                updateFloatButton(isEmpty)
+            }
     }
 
 /*    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,9 +93,9 @@ class MainActivity : BaseActivity() {
         leftNavView.setupWithNavController(navigationController)
     }
 
-    private fun initFloatButton() {
+    private fun updateFloatButton(isRepoEmpty: Boolean) {
         fabMain.setOnClickListener {
-            if (repository.isEmpty()) {
+            if (isRepoEmpty) {
                 val intent = Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT)
                 startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_SELECT_REQUEST)
             }

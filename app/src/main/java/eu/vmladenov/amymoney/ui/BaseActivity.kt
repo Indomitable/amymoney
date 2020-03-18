@@ -3,8 +3,15 @@ package eu.vmladenov.amymoney.ui
 import androidx.appcompat.app.AppCompatActivity
 import eu.vmladenov.amymoney.AMyMoneyApplication
 import eu.vmladenov.amymoney.dagger.AppComponent
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.SingleSubject
 
 abstract class BaseActivity protected constructor(): AppCompatActivity() {
-    protected val application: AMyMoneyApplication
-        get() = (applicationContext as AMyMoneyApplication)
+    private val liveCycleSubject: SingleSubject<Boolean> = SingleSubject.create<Boolean>()
+    protected val destroyNotifier: Observable<Boolean> = liveCycleSubject.toObservable()
+
+    override fun onDestroy() {
+        liveCycleSubject.onSuccess(true)
+        super.onDestroy()
+    }
 }
