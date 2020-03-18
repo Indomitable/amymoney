@@ -11,11 +11,17 @@ import eu.vmladenov.amymoney.models.Account
 import kotlinx.android.synthetic.main.transaction_list_item.view.*
 import java.text.DateFormat
 import java.text.NumberFormat
-import java.util.Currency
 import kotlin.math.min
 
 
-class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>() {
+interface ItemViewModel {
+
+}
+
+data class TransactionItemViewModel(val transaction: TransactionViewModel) : ItemViewModel
+data class DescriptionItemViewModel(val text: String) : ItemViewModel
+
+class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHolder>() {
 
     private lateinit var counterAccount: Account
     private lateinit var transactions: List<TransactionViewModel>
@@ -24,7 +30,7 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
     private var clickHandler: TransactionClickHandler? = null
 
     // this is the list of only current shown transactions, we going to add more as we scroll
-    private var currentViewTransactions = mutableListOf<TransactionViewModel>()
+    private var currentViewTransactions = mutableListOf<ItemViewModel>()
 
     private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
         val item = v.tag as TransactionViewModel
@@ -39,18 +45,34 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
         this.counterAccount = counterAccount
         this.transactions = transactions
         this.formatter = formatter
+        currentViewTransactions.add(DescriptionItemViewModel("Transactions..."))
         loadMoreTransactions()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.transaction_list_item, parent, false) as LinearLayout
-        return ViewHolder(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        if (viewType == 0) {
+            val itemView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.transaction_list_item, parent, false) as LinearLayout
+            return TransactionViewHolder(itemView)
+        }
+        if (viewType == 1) {
+            val itemView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.transaction_list_description_item, parent, false) as TextView
+            return DescriptionViewHolder(itemView)
+        }
+        throw Exception("Not supported view type")
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item = currentViewTransactions[position]
         holder.bind(item)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> 1
+            else -> 0
+        }
     }
 
     override fun getItemCount(): Int {
@@ -66,26 +88,36 @@ class TransactionsAdapter: RecyclerView.Adapter<TransactionsAdapter.ViewHolder>(
         val toIndex = min(maxSize, from + 20)
 
         val newTransactions = transactions.subList(from, toIndex)
+            .map { TransactionItemViewModel(it) }
         currentViewTransactions.addAll(newTransactions)
         notifyItemRangeInserted(from, toIndex - from)
     }
 
-    inner class ViewHolder(private val itemLayout: LinearLayout) : RecyclerView.ViewHolder(itemLayout) {
+    abstract inner class BaseViewHolder(container: View): RecyclerView.ViewHolder(container) {
+        abstract fun bind(itemViewModel: ItemViewModel)
+    }
+
+    inner class TransactionViewHolder(private val itemLayout: LinearLayout) : BaseViewHolder(itemLayout) {
         private val payeeView: TextView = itemLayout.transaction_item_payee
         private val dateView: TextView = itemLayout.transaction_item_date
         private val valueView: TextView = itemLayout.transaction_item_value
 
-
-        fun bind(transaction: TransactionViewModel) {
-            with(itemLayout) {
-                tag = transaction
-                setOnClickListener(onClickListener)
-            }
+        override fun bind(itemViewModel: ItemViewModel) {
+            val transaction = (itemViewModel as TransactionItemViewModel).transaction
+            itemLayout.tag = itemViewModel
+            itemLayout.setOnClickListener(onClickListener)
             if (transaction.date != null) {
                 dateView.text = DateFormat.getDateInstance(DateFormat.SHORT).format(transaction.date)
             }
             payeeView.text = transaction.payee
             valueView.text = formatter.format(transaction.value)
+        }
+    }
+
+    inner class DescriptionViewHolder(private val textView: TextView) : BaseViewHolder(textView) {
+        override fun bind(itemViewModel: ItemViewModel) {
+            val description = (itemViewModel as DescriptionItemViewModel).text
+            textView.text = description
         }
     }
 }

@@ -82,7 +82,7 @@ class TransactionsFragment : NavigationFragment() {
         transactionsView.adapter = transactionsAdapter
         transactionsView.layoutManager = LinearLayoutManager(context)
         transactionsView.setHasFixedSize(true)
-        transactionsView.addItemDecoration(TopBorderDecorator(requireContext()), 0)
+//        transactionsView.addItemDecoration(TopBorderDecorator(requireContext()), 0)
     }
 
     private fun setEvents(view: View) {
@@ -139,7 +139,7 @@ interface TransactionClickHandler {
 /**
  * Used to draw the top border of the first transaction
  */
-class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
+/*class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
     private var mBounds = Rect()
     private val color: Int = ContextCompat.getColor(context, R.color.transaction_list_item_border_color)
     private val width: Float = context.resources.displayMetrics.density * 1.5f
@@ -161,4 +161,4 @@ class TopBorderDecorator(val context: Context) : RecyclerView.ItemDecoration() {
         }
         c.restore()
     }
-}
+}*/
