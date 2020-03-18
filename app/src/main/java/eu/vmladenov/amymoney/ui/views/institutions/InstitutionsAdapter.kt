@@ -9,15 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.models.Institution
 import eu.vmladenov.amymoney.models.InstitutionComparable
 
-class InstitutionsAdapter(private val clickHandler: InstitutionClickHandler) :
-    ListAdapter<Institution, InstitutionsAdapter.ViewHolder>(
-        InstitutionComparable
-    ) {
+class InstitutionsAdapter(private val clickHandler: InstitutionClickHandler) : ListAdapter<Institution, InstitutionsAdapter.ViewHolder>(InstitutionComparable) {
+
     private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
         val item = v.tag as Institution
         clickHandler.handle(item)
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -38,9 +35,9 @@ class InstitutionsAdapter(private val clickHandler: InstitutionClickHandler) :
                 setOnClickListener(onClickListener)
             }
         }
-
-        override fun toString(): String {
-            return super.toString() + " '" + textView.text + "'"
-        }
     }
+}
+
+interface InstitutionClickHandler {
+    fun handle(institution: Institution)
 }

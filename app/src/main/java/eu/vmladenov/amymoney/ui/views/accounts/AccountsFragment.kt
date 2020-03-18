@@ -40,7 +40,7 @@ class AccountsFragment : NavigationFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this, AccountsViewModelFactory(initialInstitutionId)).get(AccountsViewModel::class.java)
+        viewModel = ViewModelProvider(this, AccountsViewModel.Factory(initialInstitutionId)).get(AccountsViewModel::class.java)
             .also {
                 bindToViewModel(it)
             }

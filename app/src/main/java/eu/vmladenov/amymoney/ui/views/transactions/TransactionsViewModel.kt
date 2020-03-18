@@ -16,15 +16,6 @@ import kotlinx.coroutines.*
 import java.math.BigDecimal
 import java.util.*
 
-class TransactionsViewModelFactory(private val filter: TransactionsFilter) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
-        val viewModelFactory = ServiceProvider.getService(ITransactionViewModelFactory::class)
-        return TransactionsViewModel(repository, viewModelFactory, filter) as T
-    }
-}
-
 class TransactionsViewModel(
     private val repository: IAMyMoneyRepository,
     private val viewModelFactory: ITransactionViewModelFactory,
@@ -33,6 +24,7 @@ class TransactionsViewModel(
     private val filterSubject = BehaviorSubject.createDefault(filter)
     private val firstVisibleItemSubject = PublishSubject.create<Int>()
     private var totalBalanceSubject = BehaviorSubject.createDefault(BigDecimal(0.0))
+    private val firstVisibleItemObservable: Observable<Int> = firstVisibleItemSubject.distinctUntilChanged { t1, t2 -> t1 == t2 }
 
     val transactions: Observable<List<TransactionViewModel>>
         get() {
@@ -90,7 +82,18 @@ class TransactionsViewModel(
             filterSubject.onNext(value)
         }
 
-    private val firstVisibleItemObservable: Observable<Int> = firstVisibleItemSubject.distinctUntilChanged { t1, t2 -> t1 == t2 }
+    fun recalculateBalance(findFirstVisibleItemPosition: Int) {
+        firstVisibleItemSubject.onNext(findFirstVisibleItemPosition)
+    }
+
+    class Factory(private val filter: TransactionsFilter) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
+            val viewModelFactory = ServiceProvider.getService(ITransactionViewModelFactory::class)
+            return TransactionsViewModel(repository, viewModelFactory, filter) as T
+        }
+    }
 
     private suspend fun getBalanceAsync(transactions: Iterable<TransactionViewModel>, take: Int): Deferred<BigDecimal> =
         coroutineScope {
@@ -113,7 +116,5 @@ class TransactionsViewModel(
             }
         }
 
-    fun recalculateBalance(findFirstVisibleItemPosition: Int) {
-        firstVisibleItemSubject.onNext(findFirstVisibleItemPosition)
-    }
+
 }

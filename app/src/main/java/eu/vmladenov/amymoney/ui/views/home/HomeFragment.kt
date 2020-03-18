@@ -18,7 +18,7 @@ class HomeFragment : NavigationFragment() {
         fun newInstance() = HomeFragment()
     }
 
-    private val viewModel: HomeViewModel by viewModels(factoryProducer = { HomeViewModelFactory() })
+    private val viewModel: HomeViewModel by viewModels(factoryProducer = { HomeViewModel.Factory() })
 
     private lateinit var tvNoData: TextView
     private lateinit var overviewContainer: LinearLayout

@@ -47,7 +47,7 @@ class TransactionsFragment : NavigationFragment() {
             counterAccount = initialCounterAccount
         )
         formatter.currency = Currency.getInstance(transactionsFilter.counterAccount.currencyId)
-        viewModel = ViewModelProvider(this, TransactionsViewModelFactory(transactionsFilter)).get(TransactionsViewModel::class.java)
+        viewModel = ViewModelProvider(this, TransactionsViewModel.Factory(transactionsFilter)).get(TransactionsViewModel::class.java)
             .also {
                 bindToViewModel(it)
             }

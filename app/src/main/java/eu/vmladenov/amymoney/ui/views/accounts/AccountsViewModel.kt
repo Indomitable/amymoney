@@ -12,14 +12,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 
-class AccountsViewModelFactory(private val initialInstitutionId: String) : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
-        return AccountsViewModel(repository, initialInstitutionId) as T
-    }
-}
-
 class AccountsViewModel(private val repository: IAMyMoneyRepository, private val initialInstitutionId: String) : DisposableViewModel() {
     private val selectedInstitutionSubject: BehaviorSubject<Institution?> = BehaviorSubject.create<Institution?>()
     private val emptyInstitution: Institution = Institution(name = "Accounts with no institution assigned")
@@ -77,4 +69,12 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
             }
             selectedInstitutionSubject.onNext(value)
         }
+
+    class Factory(private val initialInstitutionId: String) : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
+            return AccountsViewModel(repository, initialInstitutionId) as T
+        }
+    }
 }

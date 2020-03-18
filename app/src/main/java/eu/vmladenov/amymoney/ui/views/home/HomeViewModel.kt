@@ -11,14 +11,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.functions.BiFunction
 import java.util.*
 
-class HomeViewModelFactory() : ViewModelProvider.Factory {
-    @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
-        return HomeViewModel(repository) as T
-    }
-}
-
 data class AccountBalance(val account: Account, val balance: Fraction)
 
 class HomeViewModel(val repository: IAMyMoneyRepository) : DisposableViewModel() {
@@ -45,6 +37,14 @@ class HomeViewModel(val repository: IAMyMoneyRepository) : DisposableViewModel()
                 BiFunction { a: Transactions, b: List<Account> -> Pair(a, b) }
             )
             .map { getAccountsBalance(it) }
+
+    class Factory : ViewModelProvider.Factory {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
+            return HomeViewModel(repository) as T
+        }
+    }
 
     private fun getAccountsBalance(pair: Pair<Transactions, List<Account>>): Sequence<AccountBalance> {
         val transactions = pair.first
