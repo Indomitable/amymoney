@@ -44,7 +44,7 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
             )
                 .map { pair ->
                 val selectedInstitution = pair.second
-                val userAccounts = pair.first.getUserAccounts()
+                val userAccounts = pair.first.values
                 return@map sequence<Account> {
                     if (selectedInstitution != null) {
                         if (selectedInstitution != emptyInstitution) {
@@ -52,7 +52,7 @@ class AccountsViewModel(private val repository: IAMyMoneyRepository, private val
                                 yield(account)
                             }
                         } else {
-                            for (account in userAccounts.filter { it.institutionId.isEmpty() }) {
+                            for (account in userAccounts.filter { it.institutionId.isEmpty() && !it.isTopAccount() }) {
                                 yield(account)
                             }
                         }

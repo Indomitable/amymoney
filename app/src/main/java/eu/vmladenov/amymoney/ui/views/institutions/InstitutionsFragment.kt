@@ -18,7 +18,7 @@ class InstitutionsFragment : NavigationFragment() {
 
     private val viewModel: InstitutionsViewModel by viewModels(factoryProducer = { InstitutionsViewModel.Factory() })
 
-    private val adapter: InstitutionsAdapter = InstitutionsAdapter(object : InstitutionClickHandler {
+    private val institutionAdapter: InstitutionsAdapter = InstitutionsAdapter(object : InstitutionClickHandler {
         override fun handle(institution: Institution) {
             val navController = getNavController()
             val action = InstitutionsFragmentDirections.actionNavInstitutionsToAccounts(institution.id)
@@ -35,11 +35,11 @@ class InstitutionsFragment : NavigationFragment() {
         viewModel.institutions
             .takeUntil(destroyNotifier)
             .subscribe {
-                adapter.submitList(it)
+                institutionAdapter.submitList(it)
             }
 
         with (view.institutionsList) {
-            adapter = adapter
+            adapter = institutionAdapter
         }
         return view
     }

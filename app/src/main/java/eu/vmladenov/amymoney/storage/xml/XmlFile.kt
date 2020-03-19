@@ -9,7 +9,7 @@ class XmlFile {
     val payees: Payees = Payees()
     val costCenters: CostCenters = CostCenters()
     val tags: Tags = Tags()
-    val accounts: Accounts = Accounts()
+    var accounts: Map<String, XmlAccount> = emptyMap()
     val transactions: Transactions = Transactions()
     val securities: Securities = Securities()
     val currencies: Securities = Securities()

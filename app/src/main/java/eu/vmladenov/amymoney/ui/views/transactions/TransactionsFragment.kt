@@ -1,16 +1,10 @@
 package eu.vmladenov.amymoney.ui.views.transactions
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +14,6 @@ import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
 import kotlinx.android.synthetic.main.fragment_transactions.view.*
-import kotlinx.android.synthetic.main.fragment_transactions.view.balanceText
 import java.text.NumberFormat
 import java.util.*
 
@@ -38,7 +31,7 @@ class TransactionsFragment : NavigationFragment() {
         val repository = ServiceProvider.getService(IAMyMoneyRepository::class)
 
         val accountId = arguments?.let { TransactionsFragmentArgs.fromBundle(it).COUNTERACCOUNTID } ?: ""
-        initialCounterAccount = repository.currentAccounts[accountId] ?: repository.currentAccounts.favoriteOrFirstUserAccount()
+        initialCounterAccount = repository.currentAccounts[accountId] ?: repository.currentAccounts.favoriteOrFirst()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

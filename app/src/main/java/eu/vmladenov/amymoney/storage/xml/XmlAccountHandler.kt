@@ -1,42 +1,36 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
-import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountType
-import eu.vmladenov.amymoney.models.Accounts
-import eu.vmladenov.amymoney.models.fill
-import kotlinx.coroutines.Dispatchers
+import eu.vmladenov.amymoney.models.XmlAccount
 import org.xmlpull.v1.XmlPullParser
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class XmlAccountHandler @Inject constructor(): XmlBaseModelCollectionHandler<Account>(XmlTags.Accounts, XmlTags.Account) {
+class XmlAccountHandler @Inject constructor(): XmlBaseModelCollectionHandler<XmlAccount>(XmlTags.Accounts, XmlTags.Account) {
     override fun update(parser: XmlPullParser, file: XmlFile) {
-        val accounts = readChildrenMap(parser)
-        file.accounts.fill(accounts)
+        file.accounts = readChildrenMap(parser)
     }
 
-    override fun readChild(parser: XmlPullParser): Account {
+    override fun readChild(parser: XmlPullParser): XmlAccount {
         parser.require(XmlPullParser.START_TAG, null, XmlTags.Account.tagName)
-        checkUnsupportedAttributes(parser, Account::class)
+        checkUnsupportedAttributes(parser, XmlAccount::class)
 
         val subAccountIds = mutableListOf<String>()
         val extraData = mutableMapOf<String, String>()
 
-        val account = Account(
-            id = getAttributeValue(parser, Account::id),
-            name = getAttributeValue(parser, Account::name),
-            currencyId = getAttributeValue(parser, Account::currencyId),
-            type = AccountType[Integer.parseInt(getAttributeValue(parser, Account::type))],
-            parentAccountId = getAttributeValue(parser, Account::parentAccountId),
-            lastModified = getDateAttributeValue(parser, Account::lastModified),
-            lastReconciliationDate = getDateAttributeValue(parser, Account::lastReconciliationDate),
-            institutionId = getAttributeValue(parser, Account::institutionId),
-            number = getAttributeValue(parser, Account::number),
-            openingDate = getDateAttributeValue(parser, Account::openingDate),
-            description = getAttributeValue(parser, Account::description),
+        val account = XmlAccount(
+            id = getAttributeValue(parser, XmlAccount::id),
+            name = getAttributeValue(parser, XmlAccount::name),
+            currencyId = getAttributeValue(parser, XmlAccount::currencyId),
+            type = AccountType[Integer.parseInt(getAttributeValue(parser, XmlAccount::type))],
+            parentAccountId = getAttributeValue(parser, XmlAccount::parentAccountId),
+            lastModified = getDateAttributeValue(parser, XmlAccount::lastModified),
+            lastReconciliationDate = getDateAttributeValue(parser, XmlAccount::lastReconciliationDate),
+            institutionId = getAttributeValue(parser, XmlAccount::institutionId),
+            number = getAttributeValue(parser, XmlAccount::number),
+            openingDate = getDateAttributeValue(parser, XmlAccount::openingDate),
+            description = getAttributeValue(parser, XmlAccount::description),
             subAccounts = subAccountIds,
             extra = extraData
         )

@@ -14,13 +14,11 @@ import java.util.*
 data class AccountBalance(val account: Account, val balance: Fraction)
 
 class HomeViewModel(val repository: IAMyMoneyRepository) : DisposableViewModel() {
-    private val assetAccounts: Observable<List<Account>> = repository.accounts.map { a -> a.getAccounts(AccountStandardType.Asset).toList() }
-    private val liabilityAccounts: Observable<List<Account>> = repository.accounts.map { a -> a.getAccounts(AccountStandardType.Liability).toList() }
+    private val assetAccounts: Observable<List<Account>> = repository.accounts.map { m -> m.getAccountsForType(AccountStandardType.Asset) }
+    private val liabilityAccounts: Observable<List<Account>> = repository.accounts.map { m -> m.getAccountsForType(AccountStandardType.Liability) }
 
     val isDataLoaded: Observable<Boolean>
-        get() = repository.accounts.map {
-            it.getUserAccounts().any()
-        }
+        get() = repository.accounts.map { a -> a.any() }
 
     val assetAccountsBalance: Observable<Sequence<AccountBalance>> =
         Observable.combineLatest(
