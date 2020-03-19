@@ -34,8 +34,8 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
     private var currentViewTransactions = mutableListOf<ItemViewModel>()
 
     private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
-        val item = v.tag as TransactionViewModel
-        clickHandler?.handle(item.id)
+        val item = v.tag as TransactionItemViewModel
+        clickHandler?.handle(item.transaction.id)
     }
 
     fun update(

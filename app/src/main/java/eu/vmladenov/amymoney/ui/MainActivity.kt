@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Xml
+import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -15,7 +16,7 @@ import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
 import eu.vmladenov.amymoney.infrastructure.*
 import eu.vmladenov.amymoney.infrastructure.addbutton.AddButtonClickListener
-import eu.vmladenov.amymoney.infrastructure.addbutton.HomeClickListener
+import eu.vmladenov.amymoney.infrastructure.addbutton.HomeClickHandler
 import eu.vmladenov.amymoney.infrastructure.navigation.INavigationChangedListener
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.storage.xml.XmlFile
@@ -36,7 +37,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_view)
-
         repository = ServiceProvider.getService(IAMyMoneyRepository::class)
         xmlFileHandler = ServiceProvider.getService(IXmlFileHandler::class)
         navigationChangedListener = ServiceProvider.getService(INavigationChangedListener::class)
@@ -101,7 +101,7 @@ class MainActivity : BaseActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == HomeClickListener.FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == HomeClickHandler.FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val selectedFile = data.data ?: return
             loadRepository(selectedFile)
         }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ItemContainer">
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+    <style name="ItemLabel">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
+</resources>

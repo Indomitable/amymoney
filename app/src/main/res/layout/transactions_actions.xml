@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="20dp">
+
+    <LinearLayout
+        style="@style/ItemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/ItemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deposit" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:src="@android:drawable/ic_menu_upload"
+            app:fabSize="mini" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/ItemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/ItemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transfer" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_upload"
+            app:fabSize="mini" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/ItemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/ItemLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Withdrawal" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_camera"
+            app:fabSize="mini" />
+    </LinearLayout>
+</LinearLayout>
