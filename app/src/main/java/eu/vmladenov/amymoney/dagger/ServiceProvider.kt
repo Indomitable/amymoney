@@ -1,6 +1,7 @@
 package eu.vmladenov.amymoney.dagger
 
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
+import eu.vmladenov.amymoney.infrastructure.navigation.INavigationChangedListener
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.ui.views.transactions.ITransactionViewModelFactory
 import java.lang.Exception
@@ -21,6 +22,9 @@ object ServiceProvider {
     fun <T: Any> getService(service: KClass<T>): T {
         if (service == IAMyMoneyRepository::class) {
             return injector.getRepository() as T
+        }
+        if (service == INavigationChangedListener::class) {
+            return injector.getNavigationChangedListener() as T
         }
         if (service == IXmlFileHandler::class) {
             return xmlHandlerComponent.getXmlFileReader() as T

@@ -11,12 +11,11 @@ import eu.vmladenov.amymoney.models.Account
 import kotlinx.android.synthetic.main.transaction_list_item.view.*
 import java.text.DateFormat
 import java.text.NumberFormat
+import java.util.*
 import kotlin.math.min
 
 
-interface ItemViewModel {
-
-}
+interface ItemViewModel
 
 data class TransactionItemViewModel(val transaction: TransactionViewModel) : ItemViewModel
 data class DescriptionItemViewModel(val text: String) : ItemViewModel
@@ -26,8 +25,10 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
     private lateinit var counterAccount: Account
     private lateinit var transactions: List<TransactionViewModel>
     private lateinit var formatter: NumberFormat
+    private val dateFormatter = DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.getDefault())
 
     private var clickHandler: TransactionClickHandler? = null
+    private var loadedTransactionsCount: Int = 0
 
     // this is the list of only current shown transactions, we going to add more as we scroll
     private var currentViewTransactions = mutableListOf<ItemViewModel>()
@@ -45,7 +46,8 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
         this.counterAccount = counterAccount
         this.transactions = transactions
         this.formatter = formatter
-        currentViewTransactions.add(DescriptionItemViewModel("Transactions..."))
+        this.loadedTransactionsCount = 0
+        appendDescription(DescriptionItemViewModel("Transactions..."))
         loadMoreTransactions()
     }
 
@@ -80,7 +82,7 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
     }
 
     fun loadMoreTransactions() {
-        val from = currentViewTransactions.size
+        val from = loadedTransactionsCount
         val maxSize = transactions.size
         if (from == maxSize) {
             return
@@ -89,8 +91,19 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
 
         val newTransactions = transactions.subList(from, toIndex)
             .map { TransactionItemViewModel(it) }
-        currentViewTransactions.addAll(newTransactions)
-        notifyItemRangeInserted(from, toIndex - from)
+        appendTransactions(newTransactions)
+    }
+
+    private fun appendTransactions(items: List<TransactionItemViewModel>) {
+        val positionStart = currentViewTransactions.size
+        currentViewTransactions.addAll(items)
+        loadedTransactionsCount += items.size
+        notifyItemRangeInserted(positionStart, items.size)
+    }
+
+    private fun appendDescription(descr: DescriptionItemViewModel) {
+        currentViewTransactions.add(descr)
+        notifyItemInserted(currentViewTransactions.size - 1)
     }
 
     abstract inner class BaseViewHolder(container: View): RecyclerView.ViewHolder(container) {
@@ -107,7 +120,7 @@ class TransactionsAdapter : RecyclerView.Adapter<TransactionsAdapter.BaseViewHol
             itemLayout.tag = itemViewModel
             itemLayout.setOnClickListener(onClickListener)
             if (transaction.date != null) {
-                dateView.text = DateFormat.getDateInstance(DateFormat.SHORT).format(transaction.date)
+                dateView.text = dateFormatter.format(transaction.date)
             }
             payeeView.text = transaction.payee
             valueView.text = formatter.format(transaction.value)

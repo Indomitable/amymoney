@@ -1,5 +1,6 @@
 package eu.vmladenov.amymoney.infrastructure
 
+import eu.vmladenov.amymoney.infrastructure.navigation.Destinations
 import eu.vmladenov.amymoney.models.*
 import eu.vmladenov.amymoney.storage.xml.XmlFile
 import io.reactivex.rxjava3.core.Observable
@@ -21,6 +22,9 @@ interface IAMyMoneyRepository {
     val prices: BehaviorSubject<Prices>
     val extra: BehaviorSubject<Map<String, String>>
     val unsupportedTags: BehaviorSubject<List<UnsupportedTag>>
+
+    val destination: BehaviorSubject<Destinations>
+
     fun isEmpty(): Observable<Boolean>
     fun updateFromFile(file: XmlFile)
 
@@ -44,6 +48,8 @@ class AMyMoneyRepository @Inject constructor() : IAMyMoneyRepository {
     override val prices: BehaviorSubject<Prices> = BehaviorSubject.createDefault(Prices())
     override val extra: BehaviorSubject<Map<String, String>> = BehaviorSubject.createDefault(emptyMap())
     override val unsupportedTags: BehaviorSubject<List<UnsupportedTag>> = BehaviorSubject.createDefault(emptyList())
+
+    override val destination: BehaviorSubject<Destinations> = BehaviorSubject.createDefault(Destinations.HOME)
 
     override val currentAccounts: Accounts
         get() = accounts.value

@@ -5,9 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Xml
-import android.view.View
-import androidx.core.view.get
-import androidx.core.view.size
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,8 +13,10 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
-import eu.vmladenov.amymoney.infrastructure.ProgressReporter
+import eu.vmladenov.amymoney.infrastructure.*
+import eu.vmladenov.amymoney.infrastructure.addbutton.AddButtonClickListener
+import eu.vmladenov.amymoney.infrastructure.addbutton.HomeClickListener
+import eu.vmladenov.amymoney.infrastructure.navigation.INavigationChangedListener
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.storage.xml.XmlFile
 import eu.vmladenov.amymoney.ui.views.dialogs.LoadProgressFragment
@@ -26,12 +25,12 @@ import kotlinx.android.synthetic.main.main_view.*
 import kotlinx.coroutines.*
 import java.util.zip.GZIPInputStream
 
-
 class MainActivity : BaseActivity() {
-    private val FILE_SELECT_REQUEST = 1001
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var repository: IAMyMoneyRepository
     private lateinit var xmlFileHandler: IXmlFileHandler
+    private lateinit var navigationChangedListener: INavigationChangedListener
+    private lateinit var navigationController: NavController
 
     @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,16 +39,25 @@ class MainActivity : BaseActivity() {
 
         repository = ServiceProvider.getService(IAMyMoneyRepository::class)
         xmlFileHandler = ServiceProvider.getService(IXmlFileHandler::class)
+        navigationChangedListener = ServiceProvider.getService(INavigationChangedListener::class)
 
         setSupportActionBar(mainToolbar)
         repository.isEmpty()
             .takeUntil(destroyNotifier)
             .subscribe { isEmpty ->
                 if (!isEmpty) {
-                    initializeNav()
+                    initializeNavigation()
                 }
-                updateFloatButton(isEmpty)
             }
+
+        fabMain.setOnClickListener(AddButtonClickListener(repository, this))
+        navigationController = getNavController()
+        navigationController.addOnDestinationChangedListener(navigationChangedListener)
+    }
+
+    override fun onDestroy() {
+        navigationController.removeOnDestinationChangedListener(navigationChangedListener)
+        super.onDestroy()
     }
 
 /*    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -59,8 +67,7 @@ class MainActivity : BaseActivity() {
 
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = getNavController()
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return navigationController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     // https://issuetracker.google.com/issues/142847973
@@ -71,7 +78,7 @@ class MainActivity : BaseActivity() {
         return navHostFragment!!.navController
     }
 
-    private fun initializeNav() {
+    private fun initializeNavigation() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home,
@@ -85,7 +92,6 @@ class MainActivity : BaseActivity() {
             mainViewLayout
         )
 
-        val navigationController = getNavController()
         setupActionBarWithNavController(
             navigationController,
             appBarConfiguration
@@ -93,17 +99,9 @@ class MainActivity : BaseActivity() {
         leftNavView.setupWithNavController(navigationController)
     }
 
-    private fun updateFloatButton(isRepoEmpty: Boolean) {
-        fabMain.setOnClickListener {
-            if (isRepoEmpty) {
-                val intent = Intent().setType("*/*").setAction(Intent.ACTION_OPEN_DOCUMENT)
-                startActivityForResult(Intent.createChooser(intent, "Select file"), FILE_SELECT_REQUEST)
-            }
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == HomeClickListener.FILE_SELECT_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             val selectedFile = data.data ?: return
             loadRepository(selectedFile)
         }
