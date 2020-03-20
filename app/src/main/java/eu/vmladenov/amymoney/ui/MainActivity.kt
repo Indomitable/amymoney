@@ -45,14 +45,15 @@ class MainActivity : BaseActivity() {
         repository.isEmpty()
             .takeUntil(destroyNotifier)
             .subscribe { isEmpty ->
-                if (!isEmpty) {
-                    initializeNavigation()
-                }
+                // We need a counter account for the transactions view to work. Enable it when have any.
+                val transaction = leftNavView.menu.findItem(R.id.nav_transactions)
+                transaction.isVisible = !isEmpty
             }
 
         fabMain.setOnClickListener(AddButtonClickListener(repository, this))
         navigationController = getNavController()
         navigationController.addOnDestinationChangedListener(navigationChangedListener)
+        initializeNavigation()
     }
 
     override fun onDestroy() {
