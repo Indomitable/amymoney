@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.ui.views.NavigationFragment
-import eu.vmladenov.amymoney.ui.views.transactions.TransactionsFragment
 import kotlinx.android.synthetic.main.accounts_fragment.view.*
 
 class AccountsFragment : NavigationFragment() {

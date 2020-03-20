@@ -1,6 +1,5 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Address
 import eu.vmladenov.amymoney.models.Institution
 import eu.vmladenov.amymoney.models.Institutions

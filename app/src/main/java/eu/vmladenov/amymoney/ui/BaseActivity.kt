@@ -1,8 +1,6 @@
 package eu.vmladenov.amymoney.ui
 
 import androidx.appcompat.app.AppCompatActivity
-import eu.vmladenov.amymoney.AMyMoneyApplication
-import eu.vmladenov.amymoney.dagger.AppComponent
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.SingleSubject
 

@@ -1,7 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.infrastructure.Fraction
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Price
 import eu.vmladenov.amymoney.models.PricePair
 import org.xmlpull.v1.XmlPullParser

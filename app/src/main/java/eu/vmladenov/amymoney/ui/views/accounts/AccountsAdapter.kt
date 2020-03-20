@@ -1,12 +1,12 @@
 package eu.vmladenov.amymoney.ui.views.accounts
 
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.models.Account
 import eu.vmladenov.amymoney.models.AccountComparable

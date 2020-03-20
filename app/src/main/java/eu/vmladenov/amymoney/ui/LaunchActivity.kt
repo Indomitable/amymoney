@@ -3,7 +3,6 @@ package eu.vmladenov.amymoney.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import eu.vmladenov.amymoney.AMyMoneyApplication
 
 class LaunchActivity: Activity() {
 

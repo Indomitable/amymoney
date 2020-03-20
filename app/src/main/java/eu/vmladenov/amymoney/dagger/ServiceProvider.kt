@@ -4,7 +4,6 @@ import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.infrastructure.navigation.INavigationChangedListener
 import eu.vmladenov.amymoney.storage.xml.IXmlFileHandler
 import eu.vmladenov.amymoney.ui.views.transactions.ITransactionViewModelFactory
-import java.lang.Exception
 import kotlin.reflect.KClass
 
 object ServiceProvider {

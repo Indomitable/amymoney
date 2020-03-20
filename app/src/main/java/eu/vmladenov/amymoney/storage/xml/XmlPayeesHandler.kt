@@ -1,6 +1,5 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject

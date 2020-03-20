@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import eu.vmladenov.amymoney.dagger.ServiceProvider
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.Payee
-import eu.vmladenov.amymoney.models.Payees
 import io.reactivex.rxjava3.core.Observable
 
 class PayeesViewModel(private val repository: IAMyMoneyRepository) : ViewModel() {

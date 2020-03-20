@@ -2,7 +2,6 @@ package eu.vmladenov.amymoney.models
 
 import eu.vmladenov.amymoney.infrastructure.Fraction
 import java.util.*
-import kotlin.collections.ArrayList
 
 data class Price(
     @XmlAttribute("source") val source: String,

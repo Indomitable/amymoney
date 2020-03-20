@@ -1,10 +1,8 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.infrastructure.Fraction
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.*
 import org.xmlpull.v1.XmlPullParser
-import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.floor

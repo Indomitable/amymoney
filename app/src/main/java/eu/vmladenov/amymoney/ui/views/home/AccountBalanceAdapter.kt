@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.ui.views.accounts.AccountClickHandler
 import kotlinx.android.synthetic.main.account_balance_list_item.view.*
-import java.math.RoundingMode
 import java.text.NumberFormat
 import java.util.*
 

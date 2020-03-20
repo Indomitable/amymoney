@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Xml
-import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -14,7 +13,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.dagger.ServiceProvider
-import eu.vmladenov.amymoney.infrastructure.*
+import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
+import eu.vmladenov.amymoney.infrastructure.ProgressReporter
 import eu.vmladenov.amymoney.infrastructure.addbutton.AddButtonClickListener
 import eu.vmladenov.amymoney.infrastructure.addbutton.HomeClickHandler
 import eu.vmladenov.amymoney.infrastructure.navigation.INavigationChangedListener

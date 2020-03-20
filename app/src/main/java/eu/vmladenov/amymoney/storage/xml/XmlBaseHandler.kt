@@ -1,10 +1,8 @@
 package eu.vmladenov.amymoney.storage.xml
 
-import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 import eu.vmladenov.amymoney.models.XmlAttribute
 import eu.vmladenov.amymoney.models.XmlTag
 import org.xmlpull.v1.XmlPullParser
-import java.lang.Exception
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*

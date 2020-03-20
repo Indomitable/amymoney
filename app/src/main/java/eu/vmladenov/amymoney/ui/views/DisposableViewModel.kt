@@ -2,7 +2,6 @@ package eu.vmladenov.amymoney.ui.views
 
 import androidx.lifecycle.ViewModel
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.SingleSubject
 
 open class DisposableViewModel: ViewModel() {

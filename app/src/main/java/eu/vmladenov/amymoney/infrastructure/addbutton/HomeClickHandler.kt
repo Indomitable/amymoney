@@ -2,15 +2,6 @@ package eu.vmladenov.amymoney.infrastructure.addbutton
 
 import android.app.Activity
 import android.content.Intent
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.RotateAnimation
-import android.widget.PopupWindow
-import androidx.core.view.marginEnd
-import eu.vmladenov.amymoney.R
 import eu.vmladenov.amymoney.infrastructure.IAMyMoneyRepository
 
 class HomeClickHandler {

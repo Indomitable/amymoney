@@ -1,7 +1,6 @@
 package eu.vmladenov.amymoney.storage.xml
 
 import eu.vmladenov.amymoney.infrastructure.IProgressReporter
-import kotlinx.coroutines.delay
 import org.xmlpull.v1.XmlPullParser
 import javax.inject.Inject
 

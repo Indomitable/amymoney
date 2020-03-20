@@ -1,6 +1,5 @@
 package eu.vmladenov.amymoney.infrastructure
 
-import java.lang.Exception
 import java.math.BigDecimal
 import java.text.ParseException
 
