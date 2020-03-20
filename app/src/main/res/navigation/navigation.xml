@@ -84,5 +84,19 @@
             app:argType="string"
             app:nullable="false"
             android:defaultValue=""/>
+        <action
+            android:id="@+id/action_nav_transactions_to_nav_transactions_edit"
+            app:destination="@id/nav_transactions_edit" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_transactions_edit"
+        android:name="eu.vmladenov.amymoney.ui.views.transactions.update.TransactionEditFragment"
+        tools:layout="@layout/transaction_edit"
+        >
+        <argument
+            android:name="TRANSACTION_ID"
+            app:argType="string"
+            app:nullable="true"/>
     </fragment>
 </navigation>

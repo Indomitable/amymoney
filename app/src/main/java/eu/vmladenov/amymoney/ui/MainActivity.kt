@@ -73,7 +73,7 @@ class MainActivity : BaseActivity() {
 
     // https://issuetracker.google.com/issues/142847973
     // https://stackoverflow.com/questions/50502269/illegalstateexception-link-does-not-have-a-navcontroller-set
-    private fun getNavController(): NavController {
+    public fun getNavController(): NavController {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.main_nav_host_fragment) as? NavHostFragment
         return navHostFragment!!.navController

@@ -1,6 +1,6 @@
 package eu.vmladenov.amymoney.infrastructure
 
-import android.app.Activity
+import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +11,9 @@ import android.widget.PopupWindow
 
 class FloatButtonRelatedActionsService {
 
-    fun openActivities(activity: Activity, fabMain: View, actionsResourceId: Int) {
+    fun openActivities(context: Context, fabMain: View, actionsResourceId: Int): View {
         val parentView = fabMain.parent as ViewGroup
-        val content = LayoutInflater.from(activity).inflate(actionsResourceId, parentView, false) as ViewGroup
+        val content = LayoutInflater.from(context).inflate(actionsResourceId, parentView, false) as ViewGroup
         content.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
         val viewLocation = IntArray(2)
         fabMain.getLocationInWindow(viewLocation)
@@ -37,5 +37,6 @@ class FloatButtonRelatedActionsService {
         popupWindow.setOnDismissListener {
             fabMain.startAnimation(rotationCounterClockwise)
         }
+        return content
     }
 }

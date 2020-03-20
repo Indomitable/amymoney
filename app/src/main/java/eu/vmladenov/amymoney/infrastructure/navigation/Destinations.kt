@@ -7,5 +7,6 @@ enum class Destinations {
     CATEGORIES,
     TAGS,
     PAYEES,
-    LEDGERS
+    LEDGERS,
+    TRANSACTION_EDIT
 }

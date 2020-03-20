@@ -24,6 +24,7 @@ class NavigationChangedListener @Inject constructor(val repository: IAMyMoneyRep
             R.id.nav_tags -> repository.destination.onNext(Destinations.TAGS)
             R.id.nav_payees -> repository.destination.onNext(Destinations.PAYEES)
             R.id.nav_transactions -> repository.destination.onNext(Destinations.LEDGERS)
+            R.id.nav_transactions_edit -> repository.destination.onNext(Destinations.TRANSACTION_EDIT)
             else -> throw Exception("Unknown destination")
         }
     }

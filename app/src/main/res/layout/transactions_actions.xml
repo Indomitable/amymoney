@@ -9,7 +9,8 @@
     <LinearLayout
         style="@style/ItemContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <TextView
             style="@style/ItemLabel"
@@ -20,7 +21,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:id="@+id/deposit_button"
             android:src="@android:drawable/ic_menu_upload"
             app:fabSize="mini" />
     </LinearLayout>
